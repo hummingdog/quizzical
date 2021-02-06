@@ -1,0 +1,50 @@
+html {
+    --block0: #970000;
+    --block1: #d56200;
+    --block2: #ecd400;
+    --block3: #00bb64;
+    --block4: #006a5a;
+    --block5: #0065bd;
+    --block6: #765eff;
+    --block7: #3f00b3;
+    --block8: #d200c8;
+    --block9: #c1005a;
+}
+
+.block0 {
+    background: var(--block0);
+}
+.block1 {
+    background: var(--block1);
+}
+.block2 {
+    background: var(--block2);
+}
+.block3 {
+    background: var(--block3);
+}
+.block4 {
+    background: var(--block4);
+}
+.block5 {
+    background: var(--block5);
+}
+.block6 {
+    background: var(--block6);
+}
+.block7 {
+    background: var(--block7);
+}
+.block8 {
+    background: var(--block8);
+}
+.block9 {
+    background: var(--block9);
+}
+
+.colorBox {
+    width: 10px;
+    height: 20px;
+    margin: 20px auto;
+    float: left;
+}

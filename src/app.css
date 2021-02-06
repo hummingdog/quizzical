@@ -1,0 +1,51 @@
+a {
+  color: var(--main-text-color);
+  text-decoration: none;
+}
+
+button, input, select, option {
+  appearance: auto;
+  font-family: var(--main-type);
+  font-size: 14px;
+  color: var(--main-text-color);
+  background: var(--main-bg-color);
+  border: 0;
+  box-shadow: var(--main-box-shadow);
+}
+
+select {
+  appearance: none;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  height: 50px;
+  margin: 0 0 20px 0;
+  padding: 0 20px;
+  line-height: 50px;
+  background: #000000;
+  box-shadow: var(--main-box-shadow);
+}
+
+main {
+  display: flex;
+  justify-content: space-evenly;
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  height: calc(100vh - 100px);
+}
+
+@media screen and (max-width: 1000px) {
+  main {
+    flex-direction: column;
+  }
+}

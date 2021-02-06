@@ -1,0 +1,119 @@
+.panel-item {
+    cursor: pointer;
+    margin: 0 10px 20px 10px;
+    transition: 0.2s;
+}
+
+section.open .panel-item {
+    cursor: auto;
+}
+
+.item-admin button, .item-admin input, .item-admin select {
+    height: 30px;
+    margin: 0 10px 0 0;
+    background: var(--high-bg-color);
+    border: none;
+    border-radius: var(--border-rounded);
+}
+
+.item-admin select {
+    min-width: 100px;
+}
+
+.panel-item .expand {
+    width: 30px;
+}
+
+.panel-item.closed .expand {
+    transform: rotate(180deg);
+}
+
+.panel-item.questions {
+    border: var(--my-questions-border-2);
+}
+
+.panel-item.rounds {
+    border: var(--my-rounds-border-2);
+}
+
+.panel-item.quizzes {
+    border: var(--my-quizzes-border-2);
+}
+
+.item-header {
+    display: none;
+}
+
+section.open .item-header {
+    display: flex;
+    justify-content: space-between;
+    margin: var(--main-margin) var(--main-margin) 20px var(--main-margin);
+}
+
+section.open .closed .item-header {
+    display: none;
+}
+
+.item-text-box {
+    order: 3;
+    align-self: flex-end;
+    margin: var(--main-margin);
+    padding: 10px;
+    background: var(--low-bg-color);
+    border-radius: var(--border-rounded);
+}
+
+section input.item-text-box, section button.item-text-box {
+    width: calc(100% - 20px);
+    margin: 0;
+    font-size: large;
+    text-align: center;
+    color: var(--main-text-color);
+    border: 0;
+}
+
+.questions .item-text-box {
+    font-size: small;
+}
+
+section.open .questions .item-text-box {
+    font-size: medium;
+}
+
+.closed .item-text-box {
+    width: 90%;
+    margin: 10px auto;
+}
+
+.item-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+    margin: var(--main-margin);
+}
+
+.questions .item-options {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.closed .item-options {
+    display: none;
+}
+
+.selection-length {
+    float: right;
+    width: min-content;
+    color: var(--high-bg-color);
+}
+
+.dropItem {
+    background: var(--high-bg-color);
+}
+
+@media screen and (max-width: 1200px) {
+    .questions .item-options {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+}

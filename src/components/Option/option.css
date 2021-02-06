@@ -1,0 +1,53 @@
+.item-option {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    position: relative;
+    min-height: 50px;
+    margin: var(--main-margin);
+    padding: 10px;
+    background: var(--high-bg-color);
+    border-radius: var(--border-rounded);
+}
+
+section input.item-option-input {
+    width: 100%;
+    font-size: medium;
+    text-align: center;
+    color: var(--main-text-color);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.my-questions .item-option button, .my-rounds .item-option button, .my-quizzes .item-option button {
+    color: var(--main-text-color);
+    background: var(--high-bg-color);
+    border: none;
+    box-shadow: none;
+}
+
+.correct-option input {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    border: 2px solid var(--main-text-color);
+    border-radius: 100%;
+    transition: 0.2s ease;
+}
+
+.correct-option input:checked {
+    background: var(--my-questions-color);
+}
+
+button.add-option {
+    width: 200px;
+    max-width: 50%;
+    height: 50px;
+    margin: 10px auto;
+    color: var(--main-text-color);
+    background: var(--high-bg-color);
+    border: none;
+    border-radius: var(--border-rounded);
+    box-shadow: none;
+}

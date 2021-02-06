@@ -1,0 +1,25 @@
+.panel-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: var(--main-margin);
+}
+
+section.open .panel-header {
+    flex-direction: row;
+}
+
+section.open .panel-header div {
+    max-width: 30%;
+}
+
+.panel-header h2, .panel-header input, .panel-header select {
+    width: 100%;
+    margin: 0 0 var(--main-margin) 0;
+}
+
+section.open .panel-header input, section.open .panel-header select {
+    width: 200px;
+    max-width: 100%;
+    margin: auto;
+}

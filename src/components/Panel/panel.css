@@ -1,0 +1,85 @@
+section, .question {
+    position: relative;
+    background: var(--main-bg-color);
+    box-shadow: var(--main-box-shadow);
+    backdrop-filter: blur(30px);
+    transition: all 0.2s ease;
+}
+
+section {
+    width: 15vw;
+    height: 100%;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: var(--base-bg-color) transparent;
+}
+
+section.open {
+    width: calc(70vw - 80px);
+}
+
+section::-webkit-scrollbar {
+    width: 8px;
+}
+
+section::-webkit-scrollbar-track {
+    background: none;
+}
+
+section::-webkit-scrollbar-thumb {
+    background-color: var(--base-bg-color) ;
+}
+
+section h2 {
+    cursor: pointer;
+}
+
+.my-questions, .my-questions button:disabled, .my-questions .panel-search input, .my-questions .panel-filter select, .my-questions button.add-item {
+    border: var(--my-questions-border-2);
+}
+
+.my-questions h2, .my-questions button, .my-questions select {
+    color: var(--my-questions-color);
+}
+
+.my-questions input {
+    color: var(--my-questions-color);
+}
+
+.my-rounds, .my-rounds button:disabled, .my-rounds .panel-search input, .my-rounds .panel-filter select, .my-rounds button.add-item {
+    border: var(--my-rounds-border-2);
+}
+
+.my-rounds h2, .my-rounds button, .my-rounds select {
+    color: var(--my-rounds-color);
+}
+
+.my-rounds input {
+    color: var(--my-rounds-color);
+}
+
+.my-quizzes, .my-quizzes button:disabled, .my-quizzes .panel-search input, .my-quizzes .panel-filter select, .my-quizzes button.add-item {
+    border: var(--my-quizzes-border-2);
+}
+
+.my-quizzes h2, .my-quizzes button, .my-quizzes select {
+    color: var(--my-quizzes-color);
+}
+
+.my-quizzes input {
+    color: var(--my-quizzes-color);
+}
+
+button.add-item {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 20px auto;
+    font-size: large;
+    border-radius: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+    section, section.open {
+        width: 100%;
+    }
+}
