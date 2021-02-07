@@ -13,6 +13,19 @@ export default function Item(props) {
 
     const [expanded, toggleItem] = useState(false);
     const [editing, toggleEditing] = useState(false);
+    const [selection, editSelection] = useState([...props.type.selection]);
+
+    useEffect(() => {
+        function getSelection(s) {
+            let values = [];
+            s.forEach(option => {
+                if (option !== undefined) values.push(props.partnerData.find(o => o.id === option).text);
+                console.log(values);
+            });
+            editSelection([...values]);
+        }
+        if (props.thisPanel !== 'questions') getSelection(props.type.selection);
+    }, [props.partnerData]);
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
     function expandItemAndPanel() {
@@ -32,14 +45,6 @@ export default function Item(props) {
     function saveItem() {
         props.onSaveItem();
         toggleEditing(false);
-    }
-
-    function getSelection(selection) {
-        let value;
-        props.partnerData.filter(item => {
-            if (item.id === selection) value = item.text;
-        });
-        return value;
     }
 
     function startDrag(event) {
@@ -128,14 +133,14 @@ export default function Item(props) {
                 onEditItemText={props.onEditItemText}
             />
             <div className='item-options'>
-                {props.type.selection.map((selection, i) =>
+                {selection.map((s, i) =>
                     <Option
-                        key={selection + i}
+                        key={s + i}
                         number={i}
                         type={props.type}
                         editing={editing}
                         thisPanel={props.thisPanel}
-                        selection={props.thisPanel === 'questions' ? selection : getSelection(selection)}
+                        selection={s}
                         group={props.type.text}
                         selected={i === props.type.correct}
                         onStartEdit={() => toggleEditing(true)}

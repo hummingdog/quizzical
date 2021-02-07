@@ -13,6 +13,7 @@ export default function ItemHeader(props) {
                 <CategorySelect
                     category={props.type.category}
                     thisPanel={props.thisPanel}
+                    isItem={props.type.text}
                 />
                 <select className='item-privacy'>
                     <option>

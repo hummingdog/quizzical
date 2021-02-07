@@ -14,7 +14,7 @@ export default function CategorySelect(props) {
             }
             {categories.map(category =>
                 <option
-                    key={props.thisPanel + category}
+                    key={props.thisPanel + category.name + (props.isItem ? props.isItem : null)}
                 >
                     {category.name}
                 </option>
