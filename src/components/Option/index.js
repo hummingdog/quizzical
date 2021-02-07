@@ -24,8 +24,7 @@ export default function Option(props) {
         props.onCheckComplete(event.target.value.length);
     }
 
-    function handleSelectedChange(event) {
-        // editSelected(true);
+    function handleSelectedChange() {
         props.onSetSelected(props.type.id, props.number);
     }
 
@@ -62,17 +61,17 @@ export default function Option(props) {
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
-                <div className='correct-option'>
-                    <div>
-                    </div>
-                    <input
-                        type='radio'
-                        name={props.group}
-                        value={props.number}
-                        checked={selected}
-                        onChange={handleSelectedChange}
-                    />
+            <div className='correct-option'>
+                <div>
                 </div>
+                <input
+                    type='radio'
+                    name={props.group}
+                    value={props.number}
+                    checked={selected}
+                    onChange={handleSelectedChange}
+                />
+            </div>
             }
         </label>
     );

@@ -51,10 +51,6 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
-    // function setSelected() {
-    //     setSelected(props.type.correct);
-    // }
-
     function saveItem() {
         if (itemComplete) {
             props.onSaveItem();
@@ -122,10 +118,10 @@ export default function Item(props) {
             onClick={!props.panelExpanded ? expandItemAndPanel : null}
         >
             {!expanded &&
-                <div
-                    className={'colorBox ' + categoryColor}
-                >
-                </div>
+            <div
+                className={'colorBox ' + categoryColor}
+            >
+            </div>
             }
             <ItemHeader
                 panelExpanded={props.panelExpanded}
