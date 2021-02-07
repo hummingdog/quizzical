@@ -15,7 +15,7 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(false);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [selection, editSelection] = useState([...props.type.selection]);
-    const [selected, editSelected] = useState(+props.type.correct);
+    const [selected, editSelected] = useState(props.type.correct);
 
     useEffect(() => {
         function getSelection() {
@@ -25,7 +25,6 @@ export default function Item(props) {
             });
             editSelection([...values]);
         }
-        if (props.thisPanel !== 'questions') getSelection();
         function checkComplete() {
             if (props.type.text.length === 0) {
                 toggleExpanded(true);
@@ -42,6 +41,7 @@ export default function Item(props) {
                 }
             });
         }
+        if (props.thisPanel !== 'questions') getSelection();
         checkComplete();
     }, [props.type.selection, props.partnerData]);
 
