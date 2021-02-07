@@ -20,6 +20,10 @@ export default function Item(props) {
         checkComplete();
     }, [props.type]);
 
+    useEffect(() => {
+        editSelected(props.type.correct)
+    }, [props.type.correct])
+
     function checkComplete(length = 1) {
         let c = true;
         if (length === 0 || props.type.text.length === 0) c = false;
@@ -47,9 +51,9 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
-    function setSelected(id, value) {
-        props.onSetSelected(id, value);
-    }
+    // function setSelected() {
+    //     setSelected(props.type.correct);
+    // }
 
     function saveItem() {
         if (itemComplete) {
@@ -159,7 +163,7 @@ export default function Item(props) {
                         group={props.type.text}
                         onCheckComplete={checkComplete}
                         onStartEdit={startEdit}
-                        onSetSelected={setSelected}
+                        onSetSelected={props.onSetSelected}
                         onEditOption={props.onEditOption}
                         onRemoveOptionFromItem={props.onRemoveOptionFromItem}
                     />

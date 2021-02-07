@@ -10,6 +10,10 @@ export default function Option(props) {
         if (props.thisPanel !== 'questions') getSelection();
     }, [props.selection, props.partnerData]);
 
+    useEffect(() => {
+        editSelected(props.selected)
+    }, [props.selected])
+
     function getSelection() {
         let value = (props.partnerData.find(o => o.id === props.selection).text);
         editSelection([...value]);
@@ -21,8 +25,8 @@ export default function Option(props) {
     }
 
     function handleSelectedChange(event) {
-        editSelected(true);
-        // props.onSetSelected(props.type.id, event.target.value);
+        // editSelected(true);
+        props.onSetSelected(props.type.id, props.number);
     }
 
     return (
