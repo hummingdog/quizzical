@@ -11,25 +11,43 @@ export let draggedItemTarget = {};
 
 export default function Item(props) {
 
-    const [expanded, toggleItem] = useState(false);
-    const [editing, toggleEditing] = useState(false);
+    const [expanded, toggleExpanded] = useState(false);
+    const [editingThis, toggleEditingThis] = useState(false);
+    const [itemComplete, toggleItemComplete] = useState(true);
     const [selection, editSelection] = useState([...props.type.selection]);
+    const [selected, editSelected] = useState(+props.type.correct);
 
     useEffect(() => {
-        function getSelection(s) {
+        function getSelection() {
             let values = [];
-            s.forEach(option => {
-                if (option !== undefined) values.push(props.partnerData.find(o => o.id === option).text);
-                console.log(values);
+            props.type.selection.forEach(option => {
+                values.push(props.partnerData.find(o => o.id === option).text);
             });
             editSelection([...values]);
         }
-        if (props.thisPanel !== 'questions') getSelection(props.type.selection);
-    }, [props.partnerData]);
+        if (props.thisPanel !== 'questions') getSelection();
+        function checkComplete() {
+            if (props.type.text.length === 0) {
+                toggleExpanded(true);
+                toggleEditingThis(true);
+                toggleItemComplete(false);
+                return props.onSwitchEditing(true);
+            }
+            selection.forEach(option => {
+                if (option.length === 0) {
+                    toggleExpanded(true);
+                    toggleEditingThis(true);
+                    toggleItemComplete(false);
+                    return props.onSwitchEditing(true);
+                }
+            });
+        }
+        checkComplete();
+    }, [props.type.selection, props.partnerData]);
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
     function expandItemAndPanel() {
-        toggleItem(true);
+        toggleExpanded(true);
         props.onSwitchPanel();
     }
 
@@ -42,9 +60,23 @@ export default function Item(props) {
         return color;
     }
 
+    function startEdit() {
+        toggleEditingThis(true);
+        props.onSwitchEditing(true);
+    }
+
+    function setSelected(id, value) {
+        console.log(value)
+        editSelected(value);
+        props.onSetSelected(id, value);
+    }
+
     function saveItem() {
-        props.onSaveItem();
-        toggleEditing(false);
+        if (itemComplete) {
+            props.onSaveItem();
+            toggleEditingThis(false);
+            props.onSwitchEditing(false);
+        }
     }
 
     function startDrag(event) {
@@ -95,7 +127,7 @@ export default function Item(props) {
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={props.type.selection.length}
-            draggable={!expanded || !props.panelExpanded}
+            draggable={itemComplete && (!expanded || !props.panelExpanded)}
             onDragStart={startDrag}
             onDragEnter={enterDrag}
             onDragOver={overDrag}
@@ -103,7 +135,6 @@ export default function Item(props) {
             onDragEnd={endDrag}
             onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
-            style={{backgroundOpacity: '0.4'}}
             onClick={!props.panelExpanded ? expandItemAndPanel : null}
         >
             {!expanded &&
@@ -117,19 +148,22 @@ export default function Item(props) {
                 type={props.type}
                 thisPanel={props.thisPanel}
                 nextPanel={props.nextPanel}
-                editing={editing}
-                onToggleItem={() => toggleItem(!expanded)}
-                onStartEdit={() => toggleEditing(true)}
+                editing={props.editing}
+                editingThis={editingThis}
+                onToggleItem={() => toggleExpanded(!expanded)}
+                onToggleItemComplete={toggleItemComplete}
+                onStartEdit={startEdit}
                 onSave={saveItem}
                 onDeleteItem={props.onDeleteItem}
             />
             <ItemText
                 type={props.type}
                 expanded={expanded}
-                editing={editing}
+                editing={props.editing && editingThis}
                 panelExpanded={props.panelExpanded}
-                onToggleItem={toggleItem}
-                onStartEdit={() => toggleEditing(true)}
+                onToggleItem={toggleExpanded}
+                onToggleItemComplete={toggleItemComplete}
+                onStartEdit={startEdit}
                 onEditItemText={props.onEditItemText}
             />
             <div className='item-options'>
@@ -138,14 +172,15 @@ export default function Item(props) {
                         key={s + i}
                         number={i}
                         type={props.type}
-                        editing={editing}
+                        editing={props.editing && editingThis}
                         thisPanel={props.thisPanel}
                         selection={s}
                         group={props.type.text}
-                        selected={i === props.type.correct}
-                        onStartEdit={() => toggleEditing(true)}
+                        selected={i === selected}
+                        onToggleItemComplete={toggleItemComplete}
+                        onStartEdit={startEdit}
+                        onSetSelected={setSelected}
                         onEditOption={props.onEditOption}
-                        onHandleSelectionChange={() => props.onSetSelection(props.type.id, i)}
                         onRemoveOptionFromItem={props.onRemoveOptionFromItem}
                     />
                 )}

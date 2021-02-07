@@ -5,6 +5,7 @@ import '../../app.css';
 
 export default function Build() {
 
+    const [editing, switchEditing] = useState(false);
     const [questions, editQuestions] = useState([...staticQuestions]);
     const [rounds, editRounds] = useState([...staticRounds]);
     const [quizzes, editQuizzes] = useState([...staticQuizzes]);
@@ -26,9 +27,11 @@ export default function Build() {
     ]);
 
     function switchPanel(i) {
-        let changeExpanded = [...panels];
-        changeExpanded.forEach((panel, j) => panel.expanded = i === j);
-        editPanels([...changeExpanded]);
+        if (!editing) {
+            let changeExpanded = [...panels];
+            changeExpanded.forEach((panel, j) => panel.expanded = i === j);
+            editPanels([...changeExpanded]);
+        }
     }
 
     return (
@@ -39,10 +42,12 @@ export default function Build() {
                     data={i === 0 ? questions : i === 1 ? rounds : quizzes}
                     partnerData={i === 1 ? questions : i === 2 ? rounds : []}
                     expanded={panel.expanded}
+                    editing={editing}
                     panelNumber={i}
                     thisPanel={panel.name}
                     panelTitle={panel.title}
                     onSaveData={i === 0 ? editQuestions : i === 1 ? editRounds : editQuizzes}
+                    onSwitchEditing={switchEditing}
                     onSwitchPanel={() => switchPanel(i)}
                 />
             )}

@@ -11,9 +11,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e25279da-0bdc-408f-a27f-1a68521ea119" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/components/CategorySelect/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CategorySelect/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Build/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Build/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Item/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Item/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/ItemHeader/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ItemHeader/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ItemText/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ItemText/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Option/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Option/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Panel/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Panel/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +77,7 @@
       <option name="presentableId" value="Default" />
       <updated>1612618517590</updated>
       <workItem from="1612618519109" duration="21668000" />
-      <workItem from="1612653185685" duration="6250000" />
+      <workItem from="1612653185685" duration="18753000" />
     </task>
     <servers />
   </component>

@@ -7,7 +7,8 @@ export default function ItemHeader(props) {
             <div className='item-admin'>
                 <button
                     className='expand'
-                    onClick={props.onToggleItem}>
+                    onClick={!props.editing ? props.onToggleItem : undefined}
+                >
                     &#9660;
                 </button>
                 <CategorySelect
@@ -28,7 +29,7 @@ export default function ItemHeader(props) {
                     delete
                 </button>
             </div>
-            {props.editing ?
+            {props.editingThis ?
                 <button
                     className='edit-item'
                     onClick={props.onSave}
@@ -38,7 +39,7 @@ export default function ItemHeader(props) {
                 :
                 <button
                     className='edit-item'
-                    onClick={props.onStartEdit}
+                    onClick={!props.editing ? props.onStartEdit : undefined}
                 >
                     edit
                 </button>

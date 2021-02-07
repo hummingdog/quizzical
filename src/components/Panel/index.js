@@ -10,18 +10,21 @@ export default function Panel(props) {
 
     function addItem() {
         props.onSwitchPanel();
-        let newData = {
-            id: '',
+        let newData = [...props.data];
+        let addition = {
+            id: (~~Math.random() * 500),
             category: 'Misc',
             private: true,
             text: '',
             selection: []
         };
         if (props.thisPanel === 'questions') {
-            newData.selection = ['', ''];
-            newData.correct = 0;
+            addition.selection = ['', ''];
+            addition.correct = 0;
         }
-        editData(oldData => [newData, ...oldData]);
+        newData.unshift(addition);
+        console.log(addition);
+        editData([...newData]);
     }
 
     function deleteItem(event) {
@@ -53,10 +56,10 @@ export default function Panel(props) {
         let newData = [...data];
         newData.find(item => item.id === event.target.dataset.item).selection.splice(event.target.value, 1);
         editData([...newData]);
-        if (props.thisPanel === 'questions') setSelection(event.target.dataset.item, 0);
+        if (props.thisPanel === 'questions') setSelected(event.target.dataset.item, 0);
     }
 
-    function setSelection(itemId, i) {
+    function setSelected(itemId, i) {
         let newData = [...data];
         newData.find(item => item.id === itemId).correct = i;
         editData([...newData]);
@@ -76,7 +79,7 @@ export default function Panel(props) {
             />
             <button
                 className='add-item'
-                onClick={addItem}
+                onClick={!props.editing ? addItem : undefined}
             >
                 +
             </button>
@@ -91,6 +94,8 @@ export default function Panel(props) {
                         panelNumber={props.panelNumber}
                         thisPanel={props.thisPanel}
                         panelExpanded={props.expanded}
+                        editing={props.editing}
+                        onSwitchEditing={props.onSwitchEditing}
                         onSwitchPanel={props.onSwitchPanel}
                         onEditItemText={editItemText}
                         onDeleteItem={deleteItem}
@@ -98,7 +103,7 @@ export default function Panel(props) {
                         onAddOptionFromPanel={addOptionFromPanel}
                         onRemoveOptionFromItem={removeOptionFromItem}
                         onEditOption={editOption}
-                        onSetSelection={setSelection}
+                        onSetSelected={setSelected}
                     />
                 )}
             </div>
