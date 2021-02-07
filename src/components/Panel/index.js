@@ -10,8 +10,7 @@ export default function Panel(props) {
 
     function addItem() {
         props.onSwitchPanel();
-        let newData = [...props.data];
-        let addition = {
+        let newData = {
             id: (~~Math.random() * 500),
             category: 'Misc',
             private: true,
@@ -19,12 +18,10 @@ export default function Panel(props) {
             selection: []
         };
         if (props.thisPanel === 'questions') {
-            addition.selection = ['', ''];
-            addition.correct = 0;
+            newData.selection = ['', ''];
+            newData.correct = 0;
         }
-        newData.unshift(addition);
-        console.log(addition);
-        editData([...newData]);
+        editData(oldData => [newData, ...oldData]);
     }
 
     function deleteItem(event) {

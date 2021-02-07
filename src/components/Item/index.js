@@ -47,10 +47,6 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
-    function setSelected(id, value) {
-        props.onSetSelected(id, value);
-    }
-
     function saveItem() {
         if (itemComplete) {
             props.onSaveItem();
@@ -159,7 +155,7 @@ export default function Item(props) {
                         group={props.type.text}
                         onCheckComplete={checkComplete}
                         onStartEdit={startEdit}
-                        onSetSelected={setSelected}
+                        onSetSelected={props.onSetSelected}
                         onEditOption={props.onEditOption}
                         onRemoveOptionFromItem={props.onRemoveOptionFromItem}
                     />
