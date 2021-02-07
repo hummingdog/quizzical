@@ -1,17 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './option.css';
 
 export default function Option(props) {
 
     const [selection, editSelection] = useState(props.selection);
+    const [selected, editSelected] = useState(props.selected);
+
+    useEffect(() => {
+        if (props.thisPanel !== 'questions') getSelection();
+    }, [props.selection, props.partnerData]);
+
+    function getSelection() {
+        let value = (props.partnerData.find(o => o.id === props.selection).text);
+        editSelection([...value]);
+    }
 
     function handleChange(event) {
         editSelection(event.target.value);
-        event.target.value.length === 0 ? props.onToggleItemComplete(false) : props.onToggleItemComplete(true);
+        props.onCheckComplete(event.target.value.length);
     }
 
     function handleSelectedChange(event) {
-        props.onSetSelected(props.type.id, event.target.value);
+        editSelected(true);
+        // props.onSetSelected(props.type.id, event.target.value);
     }
 
     return (
@@ -54,7 +65,7 @@ export default function Option(props) {
                         type='radio'
                         name={props.group}
                         value={props.number}
-                        checked={props.selected}
+                        checked={selected}
                         onChange={handleSelectedChange}
                     />
                 </div>

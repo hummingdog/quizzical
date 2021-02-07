@@ -11,7 +11,7 @@ export default function ItemText(props) {
     const handleChange = (event) => {
         editText(event.target.value);
         props.onEditItemText(props.type.id, event.target.value);
-        event.target.value.length === 0 ? props.onToggleItemComplete(false) : props.onToggleItemComplete(true);
+        props.onCheckComplete(event.target.value.length);
     }
 
     return (
