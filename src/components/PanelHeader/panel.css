@@ -23,3 +23,8 @@ section.open .panel-header input, section.open .panel-header select {
     max-width: 100%;
     margin: auto;
 }
+
+.panel-actions {
+    display: grid;
+    grid-template-columns: 50px auto 50px;
+}

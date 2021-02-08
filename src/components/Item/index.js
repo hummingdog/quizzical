@@ -11,8 +11,8 @@ export let draggedItemTarget = {};
 
 export default function Item(props) {
 
-    const [expanded, toggleExpanded] = useState(false);
-    const [editingThis, toggleEditingThis] = useState(false);
+    const [expanded, toggleExpanded] = useState(props.type.id === props.editingId);
+    const [editingThis, toggleEditingThis] = useState(props.type.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [selected, editSelected] = useState(props.type.correct);
 
@@ -24,11 +24,18 @@ export default function Item(props) {
         editSelected(props.type.correct);
     }, [props.type.correct]);
 
+    useEffect(() => {
+        if (props.collapseAll) toggleExpanded(false);
+    }, [props.collapseAll]);
+
     function checkComplete(length = 1) {
         let c = true;
         if (length === 0 || props.type.text.length === 0) c = false;
         props.type.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
+        if (!c) {
+            toggleEditingThis(true);
+        }
     }
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
@@ -52,6 +59,7 @@ export default function Item(props) {
     }
 
     function saveItem() {
+        checkComplete();
         if (itemComplete) {
             props.onSaveItem();
             toggleEditingThis(false);
@@ -115,13 +123,13 @@ export default function Item(props) {
             onDragEnd={endDrag}
             onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
-            onClick={!props.panelExpanded ? expandItemAndPanel : null}
+            onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
             {!expanded && props.panelExpanded &&
                 <div className={'colorBox ' + categoryColor}>
                 </div>
             }
-            {expanded &&
+            {expanded && props.panelExpanded &&
                 <ItemHeader
                     panelExpanded={props.panelExpanded}
                     type={props.type}
@@ -145,7 +153,7 @@ export default function Item(props) {
                 onStartEdit={startEdit}
                 onEditItemText={props.onEditItemText}
             />
-            {expanded &&
+            {expanded && props.panelExpanded &&
                 <div className='item-options'>
                     {props.type.selection.map((s, i) =>
                         <Option

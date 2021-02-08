@@ -7,7 +7,7 @@ export default function ItemHeader(props) {
             <div className='item-admin'>
                 <button
                     className='expand'
-                    onClick={!props.editing ? props.onToggleItem : undefined}
+                    onClick={!props.editingThis ? props.onToggleItem : undefined}
                 >
                     &#9660;
                 </button>
