@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ItemHeader from '../ItemHeader';
 import ItemText from '../ItemText';
 import Option from '../Option';
+import DragHandle from '../DragHandle';
 import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/colorBlocks.css';
@@ -16,10 +17,6 @@ export default function Item(props) {
     const [itemComplete, toggleItemComplete] = useState(true);
     const [correct, editCorrect] = useState(props.type.correct);
     const [dragging, toggleDragging] = useState('supported');
-
-    useEffect(() => {
-        checkComplete();
-    }, [props.type]);
 
     useEffect(() => {
         editCorrect(props.type.correct);
@@ -89,7 +86,7 @@ export default function Item(props) {
         };
         if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
         if (draggedItem.number + 1 === draggedItemTarget.number) {
-            event.currentTarget.classList.add('dropItem');
+            event.currentTarget.classList.add('drop-item');
             event.dataTransfer.dropEffect = 'copy';
         }
     }
@@ -133,7 +130,7 @@ export default function Item(props) {
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
             {!expanded && props.panelExpanded &&
-                <div className={'colorBox ' + categoryColor}>
+                <div className={'color-box ' + categoryColor}>
                 </div>
             }
             {expanded && props.panelExpanded &&
@@ -192,19 +189,11 @@ export default function Item(props) {
                 </div>
             }
             {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
-                <div
-                    aria-roledescription={'drag this item to add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
-                    title='drag me'
-                    className='dragHandle'
-                    grab={dragging}
-                    onMouseDown={() => toggleDragging('true')}
-                    onMouseUp={() => toggleDragging('supported')}
-                >
-                    <div>
-                    </div>
-                    <div>
-                    </div>
-                </div>
+                <DragHandle
+                    description={'add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
+                    dragging={dragging}
+                    onToggleDragging={toggleDragging}
+                />
             }
         </div>
     );

@@ -96,30 +96,30 @@ section.open .questions .item-text-box {
     color: var(--high-bg-color);
 }
 
-.colorBox {
+.color-box {
     width: 10px;
     height: 20px;
-    margin: 20px auto;
+    margin: auto;
     border-radius: var(--border-rounded);
 }
 
-.dragHandle {
+.drag-handle {
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     width: 20px;
     height: 20px;
-    margin: 20px auto;
+    margin: auto;
 }
 
-.dragHandle div {
+.drag-handle div {
     width: 100%;
     height: 2px;
     background: var(--high-bg-color);
 }
 
-.dropItem {
+.drop-item {
     background: var(--high-bg-color);
 }
 

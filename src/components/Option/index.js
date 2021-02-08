@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
+import DragHandle from '../DragHandle';
 import './option.css';
 
 export default function Option(props) {
 
     const [selection, editSelection] = useState(props.selection);
     const [correct, editCorrect] = useState(props.correct);
+    const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         if (props.thisPanel !== 'questions') getSelection();
@@ -66,17 +68,24 @@ export default function Option(props) {
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
-            <div className='correct-option'>
-                <div>
+                <div className='correct-option'>
+                    <div>
+                    </div>
+                    <input
+                        type='radio'
+                        name={props.group}
+                        value={props.number}
+                        checked={correct}
+                        onChange={handleCorrectChange}
+                    />
                 </div>
-                <input
-                    type='radio'
-                    name={props.group}
-                    value={props.number}
-                    checked={correct}
-                    onChange={handleCorrectChange}
+            }
+            {props.editing &&
+                <DragHandle
+                    description={'rearrange'}
+                    dragging={dragging}
+                    onToggleDragging={toggleDragging}
                 />
-            </div>
             }
         </label>
     );

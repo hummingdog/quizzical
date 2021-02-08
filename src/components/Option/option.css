@@ -1,6 +1,6 @@
 .item-option {
     display: grid;
-    grid-template-columns: 50px 1fr 50px;
+    grid-template-columns: 50px 1fr 50px 50px;
     position: relative;
     min-height: 50px;
     margin: var(--main-margin);
@@ -50,4 +50,8 @@ button.add-option {
     border: none;
     border-radius: var(--border-rounded);
     box-shadow: none;
+}
+
+.item-option .drag-handle div {
+    background: var(--main-bg-color);
 }
