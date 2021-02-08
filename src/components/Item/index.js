@@ -11,24 +11,32 @@ export let draggedItemTarget = {};
 
 export default function Item(props) {
 
-    const [expanded, toggleExpanded] = useState(false);
-    const [editingThis, toggleEditingThis] = useState(false);
+    const [expanded, toggleExpanded] = useState(props.type.id === props.editingId);
+    const [editingThis, toggleEditingThis] = useState(props.type.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [selected, editSelected] = useState(props.type.correct);
+    const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         checkComplete();
     }, [props.type]);
 
     useEffect(() => {
-        editSelected(props.type.correct)
-    }, [props.type.correct])
+        editSelected(props.type.correct);
+    }, [props.type.correct]);
+
+    useEffect(() => {
+        if (props.collapseAll) toggleExpanded(false);
+    }, [props.collapseAll]);
 
     function checkComplete(length = 1) {
         let c = true;
         if (length === 0 || props.type.text.length === 0) c = false;
         props.type.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
+        if (!c) {
+            toggleEditingThis(true);
+        }
     }
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
@@ -51,11 +59,8 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
-    // function setSelected() {
-    //     setSelected(props.type.correct);
-    // }
-
     function saveItem() {
+        checkComplete();
         if (itemComplete) {
             props.onSaveItem();
             toggleEditingThis(false);
@@ -82,6 +87,7 @@ export default function Item(props) {
         if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
         if (draggedItem.number + 1 === draggedItemTarget.number) {
             event.currentTarget.classList.add('dropItem');
+            event.dataTransfer.dropEffect = 'copy';
         }
     }
 
@@ -89,6 +95,8 @@ export default function Item(props) {
         event.preventDefault();
         if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
             event.dataTransfer.dropEffect = 'none';
+        } else {
+            event.dataTransfer.dropEffect = 'copy';
         }
     }
 
@@ -111,7 +119,7 @@ export default function Item(props) {
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={props.type.selection.length}
-            draggable={itemComplete && (!expanded || !props.panelExpanded)}
+            draggable={itemComplete && !editingThis}
             onDragStart={startDrag}
             onDragEnter={enterDrag}
             onDragOver={overDrag}
@@ -119,26 +127,26 @@ export default function Item(props) {
             onDragEnd={endDrag}
             onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
-            onClick={!props.panelExpanded ? expandItemAndPanel : null}
+            onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
-            {!expanded &&
-                <div
-                    className={'colorBox ' + categoryColor}
-                >
+            {!expanded && props.panelExpanded &&
+                <div className={'colorBox ' + categoryColor}>
                 </div>
             }
-            <ItemHeader
-                panelExpanded={props.panelExpanded}
-                type={props.type}
-                thisPanel={props.thisPanel}
-                nextPanel={props.nextPanel}
-                editing={props.editing}
-                editingThis={editingThis}
-                onToggleItem={() => toggleExpanded(!expanded)}
-                onStartEdit={startEdit}
-                onSave={saveItem}
-                onDeleteItem={props.onDeleteItem}
-            />
+            {expanded && props.panelExpanded &&
+                <ItemHeader
+                    panelExpanded={props.panelExpanded}
+                    type={props.type}
+                    thisPanel={props.thisPanel}
+                    nextPanel={props.nextPanel}
+                    editing={props.editing}
+                    editingThis={editingThis}
+                    onToggleItem={() => toggleExpanded(!expanded)}
+                    onStartEdit={startEdit}
+                    onSave={saveItem}
+                    onDeleteItem={props.onDeleteItem}
+                />
+            }
             <ItemText
                 type={props.type}
                 expanded={expanded}
@@ -149,34 +157,52 @@ export default function Item(props) {
                 onStartEdit={startEdit}
                 onEditItemText={props.onEditItemText}
             />
-            <div className='item-options'>
-                {props.type.selection.map((s, i) =>
-                    <Option
-                        key={s + i}
-                        number={i}
-                        selected={i === selected}
-                        selection={s}
-                        type={props.type}
-                        partnerData={props.partnerData}
-                        editing={props.editing && editingThis}
-                        thisPanel={props.thisPanel}
-                        group={props.type.text}
-                        onCheckComplete={checkComplete}
-                        onStartEdit={startEdit}
-                        onSetSelected={props.onSetSelected}
-                        onEditOption={props.onEditOption}
-                        onRemoveOptionFromItem={props.onRemoveOptionFromItem}
-                    />
-                )}
-                {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
-                <button
-                    className='add-option'
-                    // onClick={props.onAddOption}
+            {expanded && props.panelExpanded &&
+                <div className='item-options'>
+                    {props.type.selection.map((s, i) =>
+                        <Option
+                            key={s + i}
+                            number={i}
+                            selected={i === selected}
+                            selection={s}
+                            type={props.type}
+                            partnerData={props.partnerData}
+                            editing={props.editing && editingThis}
+                            thisPanel={props.thisPanel}
+                            group={props.type.text}
+                            onCheckComplete={checkComplete}
+                            onStartEdit={startEdit}
+                            onSetSelected={props.onSetSelected}
+                            onEditOption={props.onEditOption}
+                            onRemoveOptionFromItem={props.onRemoveOptionFromItem}
+                        />
+                    )}
+                    {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
+                    <button
+                        title='add an option'
+                        className='add-option'
+                        // onClick={props.onAddOption}
+                    >
+                        + add option
+                    </button>
+                    }
+                </div>
+            }
+            {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
+                <div
+                    aria-roledescription={'drag this item to add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
+                    title='drag me'
+                    className='dragHandle'
+                    grab={dragging}
+                    onMouseDown={() => toggleDragging('true')}
+                    onMouseUp={() => toggleDragging('supported')}
                 >
-                    + add option
-                </button>
-                }
-            </div>
+                    <div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            }
         </div>
     );
 }

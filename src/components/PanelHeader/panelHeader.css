@@ -23,3 +23,23 @@ section.open .panel-header input, section.open .panel-header select {
     max-width: 100%;
     margin: auto;
 }
+
+.panel-actions {
+    display: grid;
+    grid-template-columns: 50px auto 50px;
+}
+
+.panel-actions button {
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+}
+
+button.add-item, button.collapse-all {
+    margin: 0 auto 20px auto;
+    font-size: large;
+}
+
+button.collapse-all {
+    font-size: small;
+}
