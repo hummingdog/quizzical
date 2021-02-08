@@ -15,6 +15,7 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.type.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [selected, editSelected] = useState(props.type.correct);
+    const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         checkComplete();
@@ -86,6 +87,7 @@ export default function Item(props) {
         if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
         if (draggedItem.number + 1 === draggedItemTarget.number) {
             event.currentTarget.classList.add('dropItem');
+            event.dataTransfer.dropEffect = 'copy';
         }
     }
 
@@ -93,6 +95,8 @@ export default function Item(props) {
         event.preventDefault();
         if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
             event.dataTransfer.dropEffect = 'none';
+        } else {
+            event.dataTransfer.dropEffect = 'copy';
         }
     }
 
@@ -175,6 +179,7 @@ export default function Item(props) {
                     )}
                     {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
                     <button
+                        title='add an option'
                         className='add-option'
                         // onClick={props.onAddOption}
                     >
@@ -183,9 +188,14 @@ export default function Item(props) {
                     }
                 </div>
             }
-            {!expanded && props.panelExpanded &&
+            {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
                 <div
+                    aria-roledescription={'drag this item to add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
+                    title='drag me'
                     className='dragHandle'
+                    grab={dragging}
+                    onMouseDown={() => toggleDragging('true')}
+                    onMouseUp={() => toggleDragging('supported')}
                 >
                     <div>
                     </div>

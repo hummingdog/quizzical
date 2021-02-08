@@ -105,11 +105,14 @@ export default function Panel(props) {
             {props.expanded &&
                 <div className='panel-actions'>
                     <button
+                        title='collapse all'
+                        className='collapse-all'
                         onClick={doCollapseAll}
                     >
-                        &#9660;
+                        &#9650;
                     </button>
                     <button
+                        title='add item'
                         className='add-item'
                         onClick={!props.editing ? addItem : undefined}
                     >

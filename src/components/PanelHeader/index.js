@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import CategorySelect from '../CategorySelect';
-import './panel.css';
+import './panelHeader.css';
 
 export default function PanelHeader(props) {
     const [searchText, editSearch] = useState('');
