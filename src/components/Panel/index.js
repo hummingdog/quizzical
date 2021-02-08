@@ -32,6 +32,7 @@ export default function Panel(props) {
         let index = newData.findIndex(item => item.id === event.target.dataset.id);
         newData.splice(index, 1);
         editData([...newData]);
+        save();
     }
 
     function editItemText(itemId, text) {
@@ -65,7 +66,7 @@ export default function Panel(props) {
         editData([...newData]);
     }
 
-    function saveItem() {
+    function save() {
         props.onSaveData([...data]);
     }
 
@@ -99,7 +100,7 @@ export default function Panel(props) {
                         onSwitchPanel={props.onSwitchPanel}
                         onEditItemText={editItemText}
                         onDeleteItem={deleteItem}
-                        onSaveItem={saveItem}
+                        onSaveItem={save}
                         onAddOptionFromPanel={addOptionFromPanel}
                         onRemoveOptionFromItem={removeOptionFromItem}
                         onEditOption={editOption}

@@ -14,36 +14,22 @@ export default function Item(props) {
     const [expanded, toggleExpanded] = useState(false);
     const [editingThis, toggleEditingThis] = useState(false);
     const [itemComplete, toggleItemComplete] = useState(true);
-    const [selection, editSelection] = useState([...props.type.selection]);
     const [selected, editSelected] = useState(props.type.correct);
 
     useEffect(() => {
-        function getSelection() {
-            let values = [];
-            props.type.selection.forEach(option => {
-                values.push(props.partnerData.find(o => o.id === option).text);
-            });
-            editSelection([...values]);
-        }
-        function checkComplete() {
-            if (props.type.text.length === 0) {
-                toggleExpanded(true);
-                toggleEditingThis(true);
-                toggleItemComplete(false);
-                return props.onSwitchEditing(true);
-            }
-            selection.forEach(option => {
-                if (option.length === 0) {
-                    toggleExpanded(true);
-                    toggleEditingThis(true);
-                    toggleItemComplete(false);
-                    return props.onSwitchEditing(true);
-                }
-            });
-        }
-        if (props.thisPanel !== 'questions') getSelection();
         checkComplete();
-    }, [props.type.selection, props.partnerData]);
+    }, [props.type]);
+
+    useEffect(() => {
+        editSelected(props.type.correct)
+    }, [props.type.correct])
+
+    function checkComplete(length = 1) {
+        let c = true;
+        if (length === 0 || props.type.text.length === 0) c = false;
+        props.type.selection.forEach(option => { if (option.length === 0) c = false; });
+        toggleItemComplete(c);
+    }
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
     function expandItemAndPanel() {
@@ -65,11 +51,9 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
-    function setSelected(id, value) {
-        console.log(value)
-        editSelected(value);
-        props.onSetSelected(id, value);
-    }
+    // function setSelected() {
+    //     setSelected(props.type.correct);
+    // }
 
     function saveItem() {
         if (itemComplete) {
@@ -151,7 +135,6 @@ export default function Item(props) {
                 editing={props.editing}
                 editingThis={editingThis}
                 onToggleItem={() => toggleExpanded(!expanded)}
-                onToggleItemComplete={toggleItemComplete}
                 onStartEdit={startEdit}
                 onSave={saveItem}
                 onDeleteItem={props.onDeleteItem}
@@ -162,29 +145,30 @@ export default function Item(props) {
                 editing={props.editing && editingThis}
                 panelExpanded={props.panelExpanded}
                 onToggleItem={toggleExpanded}
-                onToggleItemComplete={toggleItemComplete}
+                onCheckComplete={checkComplete}
                 onStartEdit={startEdit}
                 onEditItemText={props.onEditItemText}
             />
             <div className='item-options'>
-                {selection.map((s, i) =>
+                {props.type.selection.map((s, i) =>
                     <Option
                         key={s + i}
                         number={i}
+                        selected={i === selected}
+                        selection={s}
                         type={props.type}
+                        partnerData={props.partnerData}
                         editing={props.editing && editingThis}
                         thisPanel={props.thisPanel}
-                        selection={s}
                         group={props.type.text}
-                        selected={i === selected}
-                        onToggleItemComplete={toggleItemComplete}
+                        onCheckComplete={checkComplete}
                         onStartEdit={startEdit}
-                        onSetSelected={setSelected}
+                        onSetSelected={props.onSetSelected}
                         onEditOption={props.onEditOption}
                         onRemoveOptionFromItem={props.onRemoveOptionFromItem}
                     />
                 )}
-                {props.thisPanel === 'questions' && props.type.selection.length < 4 &&
+                {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
                 <button
                     className='add-option'
                     // onClick={props.onAddOption}
