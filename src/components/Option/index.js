@@ -4,15 +4,15 @@ import './option.css';
 export default function Option(props) {
 
     const [selection, editSelection] = useState(props.selection);
-    const [selected, editSelected] = useState(props.selected);
+    const [correct, editCorrect] = useState(props.correct);
 
     useEffect(() => {
         if (props.thisPanel !== 'questions') getSelection();
     }, [props.selection, props.partnerData]);
 
     useEffect(() => {
-        editSelected(props.selected);
-    }, [props.selected]);
+        editCorrect(props.correct);
+    }, [props.correct]);
 
     function getSelection() {
         if (props.partnerData.find(o => o.id === props.selection)) {
@@ -28,12 +28,13 @@ export default function Option(props) {
         props.onCheckComplete(event.target.value.length);
     }
 
-    function handleSelectedChange() {
-        props.onSetSelected(props.type.id, props.number);
+    function handleCorrectChange() {
+        props.onSetCorrect(props.type.id, props.number);
     }
 
     return (
         <label
+            draggable={true}
             className='item-option'
             onClick={event => event.preventDefault()}>
             {props.editing ?
@@ -72,8 +73,8 @@ export default function Option(props) {
                     type='radio'
                     name={props.group}
                     value={props.number}
-                    checked={selected}
-                    onChange={handleSelectedChange}
+                    checked={correct}
+                    onChange={handleCorrectChange}
                 />
             </div>
             }

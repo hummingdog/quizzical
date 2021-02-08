@@ -14,7 +14,7 @@ export default function Item(props) {
     const [expanded, toggleExpanded] = useState(props.type.id === props.editingId);
     const [editingThis, toggleEditingThis] = useState(props.type.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
-    const [selected, editSelected] = useState(props.type.correct);
+    const [correct, editCorrect] = useState(props.type.correct);
     const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export default function Item(props) {
     }, [props.type]);
 
     useEffect(() => {
-        editSelected(props.type.correct);
+        editCorrect(props.type.correct);
     }, [props.type.correct]);
 
     useEffect(() => {
@@ -34,9 +34,7 @@ export default function Item(props) {
         if (length === 0 || props.type.text.length === 0) c = false;
         props.type.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
-        if (!c) {
-            toggleEditingThis(true);
-        }
+        if (!c) toggleEditingThis(true);
     }
 
     const expandOrOpen = !props.panelExpanded ? ' closed' : expanded ? '' : ' closed';
@@ -66,6 +64,11 @@ export default function Item(props) {
             toggleEditingThis(false);
             props.onSwitchEditing(false);
         }
+    }
+
+    function addOption() {
+        props.onAddQuestionOption(props.type.id);
+        checkComplete();
     }
 
     function startDrag(event) {
@@ -163,7 +166,7 @@ export default function Item(props) {
                         <Option
                             key={s + i}
                             number={i}
-                            selected={i === selected}
+                            correct={i === correct}
                             selection={s}
                             type={props.type}
                             partnerData={props.partnerData}
@@ -172,7 +175,7 @@ export default function Item(props) {
                             group={props.type.text}
                             onCheckComplete={checkComplete}
                             onStartEdit={startEdit}
-                            onSetSelected={props.onSetSelected}
+                            onSetCorrect={props.onSetCorrect}
                             onEditOption={props.onEditOption}
                             onRemoveOptionFromItem={props.onRemoveOptionFromItem}
                         />
@@ -181,7 +184,7 @@ export default function Item(props) {
                     <button
                         title='add an option'
                         className='add-option'
-                        // onClick={props.onAddOption}
+                        onClick={addOption}
                     >
                         + add option
                     </button>
