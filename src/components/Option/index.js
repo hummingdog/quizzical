@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import DragHandle from '../DragHandle';
 import './option.css';
+import {Trash} from 'react-feather';
 
 export default function Option(props) {
 
@@ -36,21 +37,25 @@ export default function Option(props) {
 
     return (
         <label
-            draggable={true}
+            draggable={dragging === 'true'}
             className='item-option'
             onClick={event => event.preventDefault()}>
             {props.editing ?
                 <button
-                    title='remove'
+                    title='remove option'
                     value={props.number}
                     data-panel={props.thisPanel}
                     data-item={props.type.id}
+                    className='remove-option'
                     onClick={() => props.onRemoveOptionFromItem(props.type.id, props.number)}
                 >
-                    -
+                    <Trash
+                        size={14}
+                    />
                 </button>
                 :
-                <div></div>
+                <div>
+                </div>
             }
             {props.thisPanel === 'questions' && props.editing ?
                 <input

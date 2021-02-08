@@ -1,12 +1,16 @@
 .item-option {
     display: grid;
-    grid-template-columns: 50px 1fr 50px 50px;
+    grid-template-columns: 50px 1fr 50px;
     position: relative;
     min-height: 50px;
     margin: var(--main-margin);
     padding: 10px;
     background: var(--high-bg-color);
     border-radius: var(--border-rounded);
+}
+
+.my-questions .item-option {
+    grid-template-columns: 50px 1fr 50px 50px;
 }
 
 section input.item-option-input {
