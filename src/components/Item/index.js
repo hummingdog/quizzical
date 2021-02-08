@@ -28,7 +28,7 @@ export default function Item(props) {
 
     function checkComplete(length = 1) {
         let c = true;
-        if (length === 0 || props.type.text.length === 0) c = false;
+        if (length === 0 || props.type.text.length === 0 || props.type.selection.length < 2) c = false;
         props.type.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
@@ -159,12 +159,12 @@ export default function Item(props) {
             />
             {expanded && props.panelExpanded &&
                 <div className='item-options'>
-                    {props.type.selection.map((s, i) =>
+                    {props.type.selection.map((o, i) =>
                         <Option
-                            key={s + i}
+                            key={o + i}
                             number={i}
                             correct={i === correct}
-                            selection={s}
+                            option={o}
                             type={props.type}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}

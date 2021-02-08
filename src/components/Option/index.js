@@ -5,21 +5,21 @@ import {Trash} from 'react-feather';
 
 export default function Option(props) {
 
-    const [selection, editSelection] = useState(props.selection);
+    const [selection, editSelection] = useState(props.option);
     const [correct, editCorrect] = useState(props.correct);
     const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         if (props.thisPanel !== 'questions') getSelection();
-    }, [props.selection, props.partnerData]);
+    }, [props.option, props.partnerData]);
 
     useEffect(() => {
         editCorrect(props.correct);
     }, [props.correct]);
 
     function getSelection() {
-        if (props.partnerData.find(o => o.id === props.selection)) {
-            let value = props.partnerData.find(o => o.id === props.selection).text;
+        if (props.partnerData.find(o => o.id === props.option)) {
+            let value = props.partnerData.find(o => o.id === props.option).text;
             editSelection([...value]);
         } else {
             props.onRemoveOptionFromItem(props.type.id, props.number);
@@ -35,6 +35,14 @@ export default function Option(props) {
         props.onSetCorrect(props.type.id, props.number);
     }
 
+    function handleRemove() {
+        if (props.thisPanel === 'questions') {
+            if (props.type.selection.length > 2) props.onRemoveOptionFromItem(props.type.id, props.number);
+        } else {
+            props.onRemoveOptionFromItem(props.type.id, props.number);
+        }
+    }
+
     return (
         <label
             draggable={dragging === 'true'}
@@ -47,7 +55,7 @@ export default function Option(props) {
                     data-panel={props.thisPanel}
                     data-item={props.type.id}
                     className='remove-option'
-                    onClick={() => props.onRemoveOptionFromItem(props.type.id, props.number)}
+                    onClick={handleRemove}
                 >
                     <Trash
                         size={14}
