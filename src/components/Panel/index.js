@@ -7,11 +7,6 @@ import './panel.css';
 export default function Panel(props) {
 
     const [data, editData] = useState([...props.data]);
-    // const [partnerData, editPartnerData] = useState([...props.partnerData]);
-
-    // useEffect(() => {
-    //     editPartnerData([...props.partnerData]);
-    // }, [props]);
 
     function addItem() {
         props.onSwitchPanel();

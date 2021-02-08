@@ -14,7 +14,6 @@ export default function Item(props) {
     const [expanded, toggleExpanded] = useState(false);
     const [editingThis, toggleEditingThis] = useState(false);
     const [itemComplete, toggleItemComplete] = useState(true);
-    // const [selection, editSelection] = useState([...props.type.selection]);
     const [selected, editSelected] = useState(props.type.correct);
 
     useEffect(() => {
@@ -24,10 +23,6 @@ export default function Item(props) {
     useEffect(() => {
         editSelected(props.type.correct);
     }, [props.type.correct]);
-
-    // useEffect(() => {
-    //     editSelection([...props.type.selection]);
-    // }, [props.type.selection]);
 
     function checkComplete(length = 1) {
         let c = true;
