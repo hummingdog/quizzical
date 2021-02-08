@@ -11,12 +11,16 @@ export default function Option(props) {
     }, [props.selection, props.partnerData]);
 
     useEffect(() => {
-        editSelected(props.selected)
-    }, [props.selected])
+        editSelected(props.selected);
+    }, [props.selected]);
 
     function getSelection() {
-        let value = (props.partnerData.find(o => o.id === props.selection).text);
-        editSelection([...value]);
+        if (props.partnerData.find(o => o.id === props.selection)) {
+            let value = props.partnerData.find(o => o.id === props.selection).text;
+            editSelection([...value]);
+        } else {
+            props.onRemoveOptionFromItem(props.type.id, props.number);
+        }
     }
 
     function handleChange(event) {
@@ -38,7 +42,7 @@ export default function Option(props) {
                     value={props.number}
                     data-panel={props.thisPanel}
                     data-item={props.type.id}
-                    onClick={props.onRemoveOptionFromItem}
+                    onClick={() => props.onRemoveOptionFromItem(props.type.id, props.number)}
                 >
                     -
                 </button>

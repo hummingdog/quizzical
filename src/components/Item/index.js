@@ -14,6 +14,7 @@ export default function Item(props) {
     const [expanded, toggleExpanded] = useState(false);
     const [editingThis, toggleEditingThis] = useState(false);
     const [itemComplete, toggleItemComplete] = useState(true);
+    // const [selection, editSelection] = useState([...props.type.selection]);
     const [selected, editSelected] = useState(props.type.correct);
 
     useEffect(() => {
@@ -21,8 +22,12 @@ export default function Item(props) {
     }, [props.type]);
 
     useEffect(() => {
-        editSelected(props.type.correct)
-    }, [props.type.correct])
+        editSelected(props.type.correct);
+    }, [props.type.correct]);
+
+    // useEffect(() => {
+    //     editSelection([...props.type.selection]);
+    // }, [props.type.selection]);
 
     function checkComplete(length = 1) {
         let c = true;
@@ -107,7 +112,7 @@ export default function Item(props) {
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={props.type.selection.length}
-            draggable={itemComplete && (!expanded || !props.panelExpanded)}
+            draggable={itemComplete && !editingThis}
             onDragStart={startDrag}
             onDragEnter={enterDrag}
             onDragOver={overDrag}
@@ -117,24 +122,24 @@ export default function Item(props) {
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded ? expandItemAndPanel : null}
         >
-            {!expanded &&
-            <div
-                className={'colorBox ' + categoryColor}
-            >
-            </div>
+            {!expanded && props.panelExpanded &&
+                <div className={'colorBox ' + categoryColor}>
+                </div>
             }
-            <ItemHeader
-                panelExpanded={props.panelExpanded}
-                type={props.type}
-                thisPanel={props.thisPanel}
-                nextPanel={props.nextPanel}
-                editing={props.editing}
-                editingThis={editingThis}
-                onToggleItem={() => toggleExpanded(!expanded)}
-                onStartEdit={startEdit}
-                onSave={saveItem}
-                onDeleteItem={props.onDeleteItem}
-            />
+            {expanded &&
+                <ItemHeader
+                    panelExpanded={props.panelExpanded}
+                    type={props.type}
+                    thisPanel={props.thisPanel}
+                    nextPanel={props.nextPanel}
+                    editing={props.editing}
+                    editingThis={editingThis}
+                    onToggleItem={() => toggleExpanded(!expanded)}
+                    onStartEdit={startEdit}
+                    onSave={saveItem}
+                    onDeleteItem={props.onDeleteItem}
+                />
+            }
             <ItemText
                 type={props.type}
                 expanded={expanded}
@@ -145,34 +150,46 @@ export default function Item(props) {
                 onStartEdit={startEdit}
                 onEditItemText={props.onEditItemText}
             />
-            <div className='item-options'>
-                {props.type.selection.map((s, i) =>
-                    <Option
-                        key={s + i}
-                        number={i}
-                        selected={i === selected}
-                        selection={s}
-                        type={props.type}
-                        partnerData={props.partnerData}
-                        editing={props.editing && editingThis}
-                        thisPanel={props.thisPanel}
-                        group={props.type.text}
-                        onCheckComplete={checkComplete}
-                        onStartEdit={startEdit}
-                        onSetSelected={props.onSetSelected}
-                        onEditOption={props.onEditOption}
-                        onRemoveOptionFromItem={props.onRemoveOptionFromItem}
-                    />
-                )}
-                {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
-                <button
-                    className='add-option'
-                    // onClick={props.onAddOption}
+            {expanded &&
+                <div className='item-options'>
+                    {props.type.selection.map((s, i) =>
+                        <Option
+                            key={s + i}
+                            number={i}
+                            selected={i === selected}
+                            selection={s}
+                            type={props.type}
+                            partnerData={props.partnerData}
+                            editing={props.editing && editingThis}
+                            thisPanel={props.thisPanel}
+                            group={props.type.text}
+                            onCheckComplete={checkComplete}
+                            onStartEdit={startEdit}
+                            onSetSelected={props.onSetSelected}
+                            onEditOption={props.onEditOption}
+                            onRemoveOptionFromItem={props.onRemoveOptionFromItem}
+                        />
+                    )}
+                    {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
+                    <button
+                        className='add-option'
+                        // onClick={props.onAddOption}
+                    >
+                        + add option
+                    </button>
+                    }
+                </div>
+            }
+            {!expanded && props.panelExpanded &&
+                <div
+                    className='dragHandle'
                 >
-                    + add option
-                </button>
-                }
-            </div>
+                    <div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            }
         </div>
     );
 }

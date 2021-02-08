@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import {draggedItem, draggedItemTarget} from '../Item';
@@ -7,6 +7,11 @@ import './panel.css';
 export default function Panel(props) {
 
     const [data, editData] = useState([...props.data]);
+    // const [partnerData, editPartnerData] = useState([...props.partnerData]);
+
+    // useEffect(() => {
+    //     editPartnerData([...props.partnerData]);
+    // }, [props]);
 
     function addItem() {
         props.onSwitchPanel();
@@ -50,11 +55,12 @@ export default function Panel(props) {
         editData([...newData]);
     }
 
-    function removeOptionFromItem(event) {
+    function removeOptionFromItem(itemId, value) {
         let newData = [...data];
-        newData.find(item => item.id === event.target.dataset.item).selection.splice(event.target.value, 1);
+        newData.find(item => item.id === itemId).selection.splice(value, 1);
         editData([...newData]);
-        if (props.thisPanel === 'questions') setSelected(event.target.dataset.item, 0);
+        if (props.thisPanel === 'questions') setSelected(itemId, 0);
+        save();
     }
 
     function setSelected(itemId, i) {
