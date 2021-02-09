@@ -10,6 +10,10 @@ export default function Panel(props) {
     const [data, editData] = useState([...props.data]);
     const [collapseAll, toggleCollapseAll] = useState(false);
 
+    useEffect(() => {
+        editData([...props.data]);
+    }, [props.reset]);
+
     function addItem() {
         let newData = {
             id: uuidv4(),
@@ -119,7 +123,7 @@ export default function Panel(props) {
                     <button
                         title='collapse all'
                         className='collapse-all'
-                        onClick={doCollapseAll}
+                        onClick={!props.editing ? doCollapseAll : undefined}
                     >
                         &#9650;
                     </button>
@@ -152,6 +156,7 @@ export default function Panel(props) {
                         onEditItemText={editItemText}
                         onDeleteItem={deleteItem}
                         onSaveItem={saveState}
+                        onCancelItem={props.onReset}
                         onAddOptionFromPanel={addOptionFromPanel}
                         onAddQuestionOption={addQuestionOption}
                         onRemoveOptionFromItem={removeOptionFromItem}

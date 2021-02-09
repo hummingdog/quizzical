@@ -63,6 +63,12 @@ export default function Item(props) {
         }
     }
 
+    function cancelItem() {
+        toggleEditingThis(false);
+        props.onSwitchEditing(false);
+        props.onCancelItem();
+    }
+
     function addOption() {
         props.onAddQuestionOption(props.type.id);
         checkComplete();
@@ -144,6 +150,7 @@ export default function Item(props) {
                     onToggleItem={() => toggleExpanded(!expanded)}
                     onStartEdit={startEdit}
                     onSave={saveItem}
+                    onCancel={cancelItem}
                     onDeleteItem={props.onDeleteItem}
                 />
             }

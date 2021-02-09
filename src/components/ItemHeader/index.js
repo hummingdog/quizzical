@@ -1,5 +1,6 @@
 import React from 'react';
 import CategorySelect from '../CategorySelect';
+import './item-header.css';
 
 export default function ItemHeader(props) {
     return (
@@ -30,12 +31,20 @@ export default function ItemHeader(props) {
                 </button>
             </div>
             {props.editingThis ?
-                <button
-                    className='edit-item'
-                    onClick={props.onSave}
-                >
-                    save
-                </button>
+                <div>
+                    <button
+                        className='edit-item'
+                        onClick={props.onCancel}
+                    >
+                        cancel
+                    </button>
+                    <button
+                        className='edit-item'
+                        onClick={props.onSave}
+                    >
+                        save
+                    </button>
+                </div>
                 :
                 <button
                     className='edit-item'

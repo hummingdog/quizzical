@@ -1,0 +1,17 @@
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    margin: var(--main-margin) var(--main-margin) 20px var(--main-margin);
+}
+
+.item-header button, .item-header input, .item-header select {
+    height: 30px;
+    margin: 0 10px 0 0;
+    background: var(--high-bg-color);
+    border: none;
+    border-radius: var(--border-rounded);
+}
+
+.item-header select {
+    min-width: 100px;
+}

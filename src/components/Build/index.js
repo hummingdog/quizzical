@@ -7,6 +7,7 @@ export default function Build() {
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
+    const [reset, doReset] = useState(false);
     const [questions, editQuestions] = useState([...staticQuestions]);
     const [rounds, editRounds] = useState([...staticRounds]);
     const [quizzes, editQuizzes] = useState([...staticQuizzes]);
@@ -48,10 +49,12 @@ export default function Build() {
                     panelNumber={i}
                     thisPanel={panel.name}
                     panelTitle={panel.title}
+                    reset={reset}
                     onSaveData={i === 0 ? editQuestions : i === 1 ? editRounds : editQuizzes}
                     onSwitchEditing={switchEditing}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(i)}
+                    onReset={() => doReset(!reset)}
                 />
             )}
         </main>

@@ -33,24 +33,6 @@ section.open .panel-item {
     border: var(--my-quizzes-border-2);
 }
 
-.item-header {
-    display: flex;
-    justify-content: space-between;
-    margin: var(--main-margin) var(--main-margin) 20px var(--main-margin);
-}
-
-.item-admin button, .item-admin input, .item-admin select {
-    height: 30px;
-    margin: 0 10px 0 0;
-    background: var(--high-bg-color);
-    border: none;
-    border-radius: var(--border-rounded);
-}
-
-.item-admin select {
-    min-width: 100px;
-}
-
 .item-text-box {
     padding: 10px;
     background: var(--low-bg-color);
