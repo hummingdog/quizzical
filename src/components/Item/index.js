@@ -210,6 +210,7 @@ export default function Item(props) {
                             number={i}
                             option={o}
                             item={item}
+                            correct={i === item.correct}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}
                             thisPanel={props.thisPanel}
