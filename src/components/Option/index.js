@@ -6,16 +6,11 @@ import {Trash} from 'react-feather';
 export default function Option(props) {
 
     const [option, editOption] = useState(props.option);
-    const [correct, editCorrect] = useState(props.correct);
     const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         if (props.thisPanel !== 'questions') getOption();
     }, [props.option, props.partnerData]);
-
-    useEffect(() => {
-        editCorrect(props.correct);
-    }, [props.item.correct]);
 
     function getOption() {
         if (props.partnerData.find(o => o.id === props.option)) {
@@ -29,12 +24,6 @@ export default function Option(props) {
     function handleChange(event) {
         editOption(event.target.value);
         props.onCheckComplete(event.target.value.length);
-    }
-
-    function handleCorrectChange(event) {
-        // editCorrect(event.target.value);
-        props.onSetCorrect(event.target.value);
-        console.log(event.target.value)
     }
 
     function handleRemove() {
@@ -84,14 +73,9 @@ export default function Option(props) {
             }
             {props.thisPanel === 'questions' && props.editing &&
                 <div className='correct-option'>
-                    <div>
-                    </div>
-                    <input
-                        type='radio'
-                        name={props.group}
-                        value={props.number}
-                        checked={correct}
-                        onChange={handleCorrectChange}
+                    <div
+                        className={props.number === props.correct ? 'selected-option' : ''}
+                        onClick={() => props.onSetCorrect(props.number)}
                     />
                 </div>
             }

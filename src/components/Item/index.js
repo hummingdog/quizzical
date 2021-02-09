@@ -108,8 +108,9 @@ export default function Item(props) {
 
     function setCorrect(i) {
         let newItem = {...item};
-        newItem.correct = i;
+        newItem.correct = +i;
         editItem({...newItem});
+        console.log(newItem)
     }
 
     // function startDrag(event) {
@@ -210,7 +211,7 @@ export default function Item(props) {
                             number={i}
                             option={o}
                             item={item}
-                            correct={i === item.correct}
+                            correct={item.correct}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}
                             thisPanel={props.thisPanel}

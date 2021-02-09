@@ -30,17 +30,17 @@ section input.item-option-input {
     box-shadow: none;
 }
 
-.correct-option input {
-    appearance: none;
+.correct-option div {
     width: 30px;
     height: 30px;
     margin: 0;
+    background: var(--main-bg-color);
     border: 2px solid var(--main-text-color);
     border-radius: 100%;
     transition: 0.2s ease;
 }
 
-.correct-option input:checked {
+.correct-option .selected-option {
     background: var(--my-questions-color);
 }
 
