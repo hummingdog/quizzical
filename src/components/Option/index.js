@@ -6,42 +6,43 @@ import {Trash} from 'react-feather';
 export default function Option(props) {
 
     const [option, editOption] = useState(props.option);
-    const [correct, editCorrect] = useState(props.correct);
+    // const [correct, editCorrect] = useState(props.item.correct);
     const [dragging, toggleDragging] = useState('supported');
 
-    // useEffect(() => {
-    //     if (props.thisPanel !== 'questions') getOption();
-    // }, [props.option, props.partnerData]);
+    useEffect(() => {
+        if (props.thisPanel !== 'questions') getOption();
+    }, [props.option, props.partnerData]);
 
     // useEffect(() => {
-    //     editCorrect(props.correct);
-    // }, [props.correct]);
+    //     editCorrect(props.item.correct);
+    // }, [props.item]);
 
-    // function getOption() {
-    //     if (props.partnerData.find(o => o.id === props.option)) {
-    //         let value = props.partnerData.find(o => o.id === props.option).text;
-    //         editOption([...value]);
-    //     } else {
-    //         props.onRemoveOptionFromItem(props.item.id, props.number);
-    //     }
-    // }
+    function getOption() {
+        if (props.partnerData.find(o => o.id === props.option)) {
+            let value = props.partnerData.find(o => o.id === props.option).text;
+            editOption([...value]);
+        } else {
+            props.onRemoveOption(props.number);
+        }
+    }
 
-    // function handleChange(event) {
-    //     editOption(event.target.value);
-    //     props.onCheckComplete(event.target.value.length);
-    // }
-    //
+    function handleChange(event) {
+        editOption(event.target.value);
+        props.onCheckComplete(event.target.value.length);
+    }
+
     // function handleCorrectChange() {
-    //     props.onSetCorrect(props.item.id, props.number);
+    //     // editCorrect(props.number);
+    //     props.onSetCorrect(props.number);
     // }
-    //
-    // function handleRemove() {
-    //     if (props.thisPanel === 'questions') {
-    //         if (props.item.selection.length > 2) props.onRemoveOptionFromItem(props.item.id, props.number);
-    //     } else {
-    //         props.onRemoveOptionFromItem(props.item.id, props.number);
-    //     }
-    // }
+
+    function handleRemove() {
+        if (props.thisPanel === 'questions') {
+            if (props.item.selection.length > 2) props.onRemoveOption(props.number);
+        } else {
+            props.onRemoveOption(props.number);
+        }
+    }
 
     return (
         <label
@@ -55,7 +56,7 @@ export default function Option(props) {
                     data-panel={props.thisPanel}
                     data-item={props.item.id}
                     className='remove-option'
-                    // onClick={handleRemove}
+                    onClick={handleRemove}
                 >
                     <Trash
                         size={14}
@@ -70,8 +71,8 @@ export default function Option(props) {
                     className='item-option-input'
                     value={option}
                     placeholder='type something!'
-                    // onChange={handleChange}
-                    // onBlur={() => props.onEditOption(props.item.id, props.number, option)}
+                    onChange={handleChange}
+                    onBlur={() => props.onEditOption(props.number, option)}
                 />
                 :
                 <button
@@ -88,8 +89,8 @@ export default function Option(props) {
                         type='radio'
                         name={props.group}
                         value={props.number}
-                        checked={correct}
-                        // onChange={handleCorrectChange}
+                        checked={props.item.correct === props.number}
+                        onChange={() => props.onSetCorrect(props.number)}
                     />
                 </div>
             }

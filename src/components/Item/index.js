@@ -85,35 +85,32 @@ export default function Item(props) {
     //     let newItem = [...item];
     //     newItem.push(draggedItem.item);
     //     editItem([...newItem]);
-    //     // props.onUpdateItem(props.item.id, selection);
     // }
 
-    // function addOption() {
-    //     let newItem = [...item];
-    //     newItem.push('');
-    //     editItem([...newItem]);
-    //     // props.onUpdateItem(props.item.id, selection);
-    // }
+    function addOption() {
+        let newItem = {...item};
+        newItem.selection.push('');
+        editItem({...newItem});
+    }
 
-    // function editOption(i, text) {
-    //     let newItem = [...item];
-    //     newItem[i] = text;
-    //     editItem([...newItem]);
-    //     // props.onUpdateItem(props.item.id, selection);
-    // }
+    function editOption(i, option) {
+        let newItem = {...item};
+        newItem.selection[i] = option;
+        editItem({...newItem});
+    }
 
-    // function removeOptionFromItem(value) {
-    //     let newItem = [...item];
-    //     newItem.splice(value, 1);
-    //     editItem([...newItem]);
-    //     if (props.thisPanel === 'questions') setCorrect(0);
-    //     // props.onUpdateItem(props.item.id, selection);
-    // }
+    function removeOption(i) {
+        let newItem = {...item};
+        newItem.selection.splice(i, 1);
+        editItem({...newItem});
+        if (props.thisPanel === 'questions') setCorrect(0);
+    }
 
-    // function setCorrect(i) {
-    //     editCorrect(i);
-    //     // props.onUpdateItem(props.item.id, selection);
-    // }
+    function setCorrect(i) {
+        let newItem = {...item};
+        newItem.correct = i;
+        editItem({...newItem});
+    }
 
     // function startDrag(event) {
     //     draggedItem = {
@@ -211,25 +208,24 @@ export default function Item(props) {
                         <Option
                             key={o + i}
                             number={i}
-                            correct={i === item.correct}
                             option={o}
-                            item={props.item}
+                            item={item}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}
                             thisPanel={props.thisPanel}
-                            group={props.item.text}
+                            group={item.text}
                             onCheckComplete={checkComplete}
                             onStartEdit={startEdit}
-                            // onSetCorrect={setCorrect}
-                            // onEditOption={editOption}
-                            // onRemoveOptionFromItem={removeOptionFromItem}
+                            onSetCorrect={setCorrect}
+                            onEditOption={editOption}
+                            onRemoveOption={removeOption}
                         />
                     )}
                     {props.thisPanel === 'questions' && item.selection.length < 4 && props.editing &&
                     <button
                         title='add an option'
                         className='add-option'
-                        // onClick={addOption}
+                        onClick={addOption}
                     >
                         + add option
                     </button>
