@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {v4 as uuidv4} from 'uuid';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import {draggedItem, draggedItemTarget} from '../Item';
@@ -12,12 +11,11 @@ export default function Panel(props) {
 
     useEffect(() => {
         editData([...props.data]);
-    }, [props.reset]);
+    }, [props.reset, props.data]);
 
     function addItem() {
         let newData = {
-            id: uuidv4(),
-            newItem: true,
+            id: 0,
             category: 'Misc',
             private: true,
             text: '',
@@ -33,76 +31,24 @@ export default function Panel(props) {
         props.onSwitchEditingId(newData.id);
     }
 
-    function deleteItem(event) {
+    function deleteItem(itemId) {
         let newData = [...data];
-        let index = newData.findIndex(item => item.id === event.target.dataset.id);
+        let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
-        saveState();
-        //
-        // DB MUTATION FOR ITEM/DOC
+        savePanel(newData);
     }
 
-    function editItemText(itemId, text) {
+    function saveItem(newItem) {
         let newData = [...data];
-        newData.find(item => item.id === itemId).text = text;
+        let index = newData.findIndex(item => item.id === newItem.id);
+        newData[index] = newItem;
         editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
+        savePanel(newData);
     }
 
-    function addOptionFromPanel() {
-        let newData = [...data];
-        newData.find(item => item.id === draggedItemTarget.item).selection.push(draggedItem.item);
-        editData([...newData]);
-        //
-        // DB MUTATION FOR DRAG TARGET ITEM/DOC
-    }
-
-    function addQuestionOption(itemId) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).selection.push('');
-        editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function editOption(itemId, i, text) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).selection[i] = text;
-        editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function removeOptionFromItem(itemId, value) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).selection.splice(value, 1);
-        editData([...newData]);
-        if (props.thisPanel === 'questions') setCorrect(itemId, 0);
-        saveState();
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function setCorrect(itemId, i) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).correct = i;
-        editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function saveItem() {
-        //
-        //
-        // FOR ANY NEW ITEM (any item with no id? or with property newItem: true?) UPDATE STATE WITH RETURNED ObjectId
-        // saveState();
-        //
-    }
-
-    function saveState() {
-        props.onSaveData([...data]);
+    function savePanel(newData) {
+        props.onSaveData([...newData]);
     }
 
     function doCollapseAll() {
@@ -139,10 +85,10 @@ export default function Panel(props) {
             <div
                 className='panel-content'
             >
-                {data.map(type =>
+                {data.map(item =>
                     <Item
-                        key={'item' + type.id}
-                        type={type}
+                        key={'item' + item.id}
+                        item={item}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}
                         thisPanel={props.thisPanel}
@@ -153,15 +99,10 @@ export default function Panel(props) {
                         onSwitchEditing={props.onSwitchEditing}
                         onSwitchEditingId={props.onSwitchEditingId}
                         onSwitchPanel={props.onSwitchPanel}
-                        onEditItemText={editItemText}
+                        // onEditItemText={editItemText}
+                        // onUpdateItem={updateItem}
                         onDeleteItem={deleteItem}
-                        onSaveItem={saveState}
-                        onCancelItem={props.onReset}
-                        onAddOptionFromPanel={addOptionFromPanel}
-                        onAddQuestionOption={addQuestionOption}
-                        onRemoveOptionFromItem={removeOptionFromItem}
-                        onEditOption={editOption}
-                        onSetCorrect={setCorrect}
+                        onSaveItem={saveItem}
                     />
                 )}
             </div>

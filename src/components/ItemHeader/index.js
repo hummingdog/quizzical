@@ -13,22 +13,24 @@ export default function ItemHeader(props) {
                     &#9660;
                 </button>
                 <CategorySelect
-                    category={props.type.category}
+                    category={props.item.category}
                     thisPanel={props.thisPanel}
-                    isItem={props.type.text}
+                    isItem={props.item.text}
                 />
                 <select className='item-privacy'>
                     <option>
                         private
                     </option>
                 </select>
-                <button
-                    className='delete'
-                    data-id={props.type.id}
-                    onClick={props.onDeleteItem}
-                >
-                    delete
-                </button>
+                {props.item.id !== 0 &&
+                    <button
+                        className='delete'
+                        data-id={props.item.id}
+                        onClick={() => props.onDeleteItem(props.item.id)}
+                    >
+                        delete
+                    </button>
+                }
             </div>
             {props.editingThis ?
                 <div>
@@ -40,7 +42,7 @@ export default function ItemHeader(props) {
                     </button>
                     <button
                         className='edit-item'
-                        onClick={props.onSave}
+                        onClick={props.onSaveItem}
                     >
                         save
                     </button>

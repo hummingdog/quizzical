@@ -5,43 +5,43 @@ import {Trash} from 'react-feather';
 
 export default function Option(props) {
 
-    const [selection, editSelection] = useState(props.option);
+    const [option, editOption] = useState(props.option);
     const [correct, editCorrect] = useState(props.correct);
     const [dragging, toggleDragging] = useState('supported');
 
-    useEffect(() => {
-        if (props.thisPanel !== 'questions') getSelection();
-    }, [props.option, props.partnerData]);
+    // useEffect(() => {
+    //     if (props.thisPanel !== 'questions') getOption();
+    // }, [props.option, props.partnerData]);
 
-    useEffect(() => {
-        editCorrect(props.correct);
-    }, [props.correct]);
+    // useEffect(() => {
+    //     editCorrect(props.correct);
+    // }, [props.correct]);
 
-    function getSelection() {
-        if (props.partnerData.find(o => o.id === props.option)) {
-            let value = props.partnerData.find(o => o.id === props.option).text;
-            editSelection([...value]);
-        } else {
-            props.onRemoveOptionFromItem(props.type.id, props.number);
-        }
-    }
+    // function getOption() {
+    //     if (props.partnerData.find(o => o.id === props.option)) {
+    //         let value = props.partnerData.find(o => o.id === props.option).text;
+    //         editOption([...value]);
+    //     } else {
+    //         props.onRemoveOptionFromItem(props.item.id, props.number);
+    //     }
+    // }
 
-    function handleChange(event) {
-        editSelection(event.target.value);
-        props.onCheckComplete(event.target.value.length);
-    }
-
-    function handleCorrectChange() {
-        props.onSetCorrect(props.type.id, props.number);
-    }
-
-    function handleRemove() {
-        if (props.thisPanel === 'questions') {
-            if (props.type.selection.length > 2) props.onRemoveOptionFromItem(props.type.id, props.number);
-        } else {
-            props.onRemoveOptionFromItem(props.type.id, props.number);
-        }
-    }
+    // function handleChange(event) {
+    //     editOption(event.target.value);
+    //     props.onCheckComplete(event.target.value.length);
+    // }
+    //
+    // function handleCorrectChange() {
+    //     props.onSetCorrect(props.item.id, props.number);
+    // }
+    //
+    // function handleRemove() {
+    //     if (props.thisPanel === 'questions') {
+    //         if (props.item.selection.length > 2) props.onRemoveOptionFromItem(props.item.id, props.number);
+    //     } else {
+    //         props.onRemoveOptionFromItem(props.item.id, props.number);
+    //     }
+    // }
 
     return (
         <label
@@ -53,9 +53,9 @@ export default function Option(props) {
                     title='remove option'
                     value={props.number}
                     data-panel={props.thisPanel}
-                    data-item={props.type.id}
+                    data-item={props.item.id}
                     className='remove-option'
-                    onClick={handleRemove}
+                    // onClick={handleRemove}
                 >
                     <Trash
                         size={14}
@@ -68,16 +68,16 @@ export default function Option(props) {
             {props.thisPanel === 'questions' && props.editing ?
                 <input
                     className='item-option-input'
-                    value={selection}
+                    value={option}
                     placeholder='type something!'
-                    onChange={handleChange}
-                    onBlur={() => props.onEditOption(props.type.id, props.number, selection)}
+                    // onChange={handleChange}
+                    // onBlur={() => props.onEditOption(props.item.id, props.number, option)}
                 />
                 :
                 <button
                     onClick={props.thisPanel === 'questions' ? props.onStartEdit : undefined}
                 >
-                    {selection}
+                    {option}
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
@@ -89,7 +89,7 @@ export default function Option(props) {
                         name={props.group}
                         value={props.number}
                         checked={correct}
-                        onChange={handleCorrectChange}
+                        // onChange={handleCorrectChange}
                     />
                 </div>
             }

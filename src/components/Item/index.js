@@ -12,15 +12,16 @@ export let draggedItemTarget = {};
 
 export default function Item(props) {
 
-    const [expanded, toggleExpanded] = useState(props.type.id === props.editingId);
-    const [editingThis, toggleEditingThis] = useState(props.type.id === props.editingId);
+    const [item, editItem] = useState({...props.item});
+    const [backupItem, editBackupItem] = useState({...props.item});
+    const [expanded, toggleExpanded] = useState(props.item.id === props.editingId);
+    const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
-    const [correct, editCorrect] = useState(props.type.correct);
     const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
-        editCorrect(props.type.correct);
-    }, [props.type.correct]);
+        editItem({...props.item});
+    }, [props.item]);
 
     useEffect(() => {
         if (props.collapseAll) toggleExpanded(false);
@@ -28,8 +29,8 @@ export default function Item(props) {
 
     function checkComplete(length = 1) {
         let c = true;
-        if (length === 0 || props.type.text.length === 0 || props.type.selection.length < 2) c = false;
-        props.type.selection.forEach(option => { if (option.length === 0) c = false; });
+        if (length === 0 || item.text.length === 0 || item.selection.length < 2) c = false;
+        item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
     }
@@ -44,7 +45,7 @@ export default function Item(props) {
     function getCategoryColor() {
         let color;
         categories.filter(cat => {
-            if (cat.name === props.type.category) color = cat.color;
+            if (cat.name === props.item.category) color = cat.color;
         });
         return color;
     }
@@ -54,10 +55,17 @@ export default function Item(props) {
         props.onSwitchEditing(true);
     }
 
+    function editItemText(value) {
+        let newItem = {...item};
+        newItem.text = value;
+        editItem( {...newItem});
+    }
+
     function saveItem() {
         checkComplete();
         if (itemComplete) {
-            props.onSaveItem();
+            props.onSaveItem({...item});
+            editBackupItem({...item});
             toggleEditingThis(false);
             props.onSwitchEditing(false);
         }
@@ -66,72 +74,105 @@ export default function Item(props) {
     function cancelItem() {
         toggleEditingThis(false);
         props.onSwitchEditing(false);
-        props.onCancelItem();
-    }
-
-    function addOption() {
-        props.onAddQuestionOption(props.type.id);
-        checkComplete();
-    }
-
-    function startDrag(event) {
-        draggedItem = {
-            item: event.currentTarget.id,
-            number: +event.currentTarget.dataset.number,
-            panel: event.currentTarget.dataset.panel,
-            length: +event.currentTarget.dataset.length
-        };
-    }
-
-    function enterDrag(event) {
-        draggedItemTarget = {
-            item: event.currentTarget.id,
-            number: +event.currentTarget.dataset.number,
-            panel: event.currentTarget.dataset.panel,
-            length: +event.currentTarget.dataset.length
-        };
-        if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
-        if (draggedItem.number + 1 === draggedItemTarget.number) {
-            event.currentTarget.classList.add('drop-item');
-            event.dataTransfer.dropEffect = 'copy';
-        }
-    }
-
-    function overDrag(event) {
-        event.preventDefault();
-        if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
-            event.dataTransfer.dropEffect = 'none';
+        if (item.id === 0) {
+            props.onDeleteItem(props.item.id);
         } else {
-            event.dataTransfer.dropEffect = 'copy';
+            editItem( {...backupItem});
         }
     }
 
-    function exitDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-    }
+    // function addOptionFromPanel() {
+    //     let newItem = [...item];
+    //     newItem.push(draggedItem.item);
+    //     editItem([...newItem]);
+    //     // props.onUpdateItem(props.item.id, selection);
+    // }
 
-    function endDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-    }
+    // function addOption() {
+    //     let newItem = [...item];
+    //     newItem.push('');
+    //     editItem([...newItem]);
+    //     // props.onUpdateItem(props.item.id, selection);
+    // }
 
-    function drop(event) {
-        props.onAddOptionFromPanel();
-        event.currentTarget.classList.remove('dropItem');
-    }
+    // function editOption(i, text) {
+    //     let newItem = [...item];
+    //     newItem[i] = text;
+    //     editItem([...newItem]);
+    //     // props.onUpdateItem(props.item.id, selection);
+    // }
+
+    // function removeOptionFromItem(value) {
+    //     let newItem = [...item];
+    //     newItem.splice(value, 1);
+    //     editItem([...newItem]);
+    //     if (props.thisPanel === 'questions') setCorrect(0);
+    //     // props.onUpdateItem(props.item.id, selection);
+    // }
+
+    // function setCorrect(i) {
+    //     editCorrect(i);
+    //     // props.onUpdateItem(props.item.id, selection);
+    // }
+
+    // function startDrag(event) {
+    //     draggedItem = {
+    //         item: event.currentTarget.id,
+    //         number: +event.currentTarget.dataset.number,
+    //         panel: event.currentTarget.dataset.panel,
+    //         length: +event.currentTarget.dataset.length
+    //     };
+    // }
+
+    // function enterDrag(event) {
+    //     draggedItemTarget = {
+    //         item: event.currentTarget.id,
+    //         number: +event.currentTarget.dataset.number,
+    //         panel: event.currentTarget.dataset.panel,
+    //         length: +event.currentTarget.dataset.length
+    //     };
+    //     if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
+    //     if (draggedItem.number + 1 === draggedItemTarget.number) {
+    //         // event.currentTarget.classList.add('drop-item');
+    //         event.dataTransfer.dropEffect = 'copy';
+    //     }
+    // }
+
+    // function overDrag(event) {
+    //     event.preventDefault();
+    //     if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
+    //         event.dataTransfer.dropEffect = 'none';
+    //     } else {
+    //         event.dataTransfer.dropEffect = 'copy';
+    //     }
+    // }
+
+    // function exitDrag(event) {
+    //     event.currentTarget.classList.remove('dropItem');
+    // }
+
+    // function endDrag(event) {
+    //     event.currentTarget.classList.remove('dropItem');
+    // }
+
+    // function drop(event) {
+    //     addOptionFromPanel();
+    //     event.currentTarget.classList.remove('dropItem');
+    // }
 
     return (
         <div
-            id={props.type.id}
+            id={item.id}
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
-            data-length={props.type.selection.length}
+            data-length={item.selection.length}
             draggable={itemComplete && !editingThis}
-            onDragStart={startDrag}
-            onDragEnter={enterDrag}
-            onDragOver={overDrag}
-            onDragExit={exitDrag}
-            onDragEnd={endDrag}
-            onDrop={drop}
+            // onDragStart={startDrag}
+            // onDragEnter={enterDrag}
+            // onDragOver={overDrag}
+            // onDragExit={exitDrag}
+            // onDragEnd={endDrag}
+            // onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -142,53 +183,53 @@ export default function Item(props) {
             {expanded && props.panelExpanded &&
                 <ItemHeader
                     panelExpanded={props.panelExpanded}
-                    type={props.type}
+                    item={props.item}
                     thisPanel={props.thisPanel}
                     nextPanel={props.nextPanel}
                     editing={props.editing}
                     editingThis={editingThis}
                     onToggleItem={() => toggleExpanded(!expanded)}
                     onStartEdit={startEdit}
-                    onSave={saveItem}
+                    onSaveItem={saveItem}
                     onCancel={cancelItem}
                     onDeleteItem={props.onDeleteItem}
                 />
             }
             <ItemText
-                type={props.type}
+                item={item}
                 expanded={expanded}
                 editing={props.editing && editingThis}
                 panelExpanded={props.panelExpanded}
                 onToggleItem={toggleExpanded}
                 onCheckComplete={checkComplete}
                 onStartEdit={startEdit}
-                onEditItemText={props.onEditItemText}
+                onEditItemText={editItemText}
             />
             {expanded && props.panelExpanded &&
                 <div className='item-options'>
-                    {props.type.selection.map((o, i) =>
+                    {item.selection.map((o, i) =>
                         <Option
                             key={o + i}
                             number={i}
-                            correct={i === correct}
+                            correct={i === item.correct}
                             option={o}
-                            type={props.type}
+                            item={props.item}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}
                             thisPanel={props.thisPanel}
-                            group={props.type.text}
+                            group={props.item.text}
                             onCheckComplete={checkComplete}
                             onStartEdit={startEdit}
-                            onSetCorrect={props.onSetCorrect}
-                            onEditOption={props.onEditOption}
-                            onRemoveOptionFromItem={props.onRemoveOptionFromItem}
+                            // onSetCorrect={setCorrect}
+                            // onEditOption={editOption}
+                            // onRemoveOptionFromItem={removeOptionFromItem}
                         />
                     )}
-                    {props.thisPanel === 'questions' && props.type.selection.length < 4 && props.editing &&
+                    {props.thisPanel === 'questions' && item.selection.length < 4 && props.editing &&
                     <button
                         title='add an option'
                         className='add-option'
-                        onClick={addOption}
+                        // onClick={addOption}
                     >
                         + add option
                     </button>

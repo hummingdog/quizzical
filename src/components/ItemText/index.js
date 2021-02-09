@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 export default function ItemText(props) {
 
-    const [text, editText] = useState(props.type.text);
+    const [text, editText] = useState(props.item.text);
+
+    useEffect(() => {
+        editText(props.item.text);
+    }, [props.item.text]);
 
     const truncateText = (str) => {
         return !props.panelExpanded && str.length > 65 ? str.substring(0,62) + '...' : str;
@@ -10,7 +14,7 @@ export default function ItemText(props) {
 
     const handleChange = (event) => {
         editText(event.target.value);
-        props.onEditItemText(props.type.id, event.target.value);
+        props.onEditItemText(event.target.value);
         props.onCheckComplete(event.target.value.length);
     }
 
@@ -31,7 +35,7 @@ export default function ItemText(props) {
                 >
                     {truncateText(text)}
                     <div className='selection-length'>
-                        {props.type.selection.length}
+                        {props.item.selection.length}
                     </div>
                 </button>
             }
