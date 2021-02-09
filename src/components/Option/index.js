@@ -15,7 +15,7 @@ export default function Option(props) {
 
     useEffect(() => {
         editCorrect(props.correct);
-    }, [props.item.correct]);
+    }, [props.correct]);
 
     function getOption() {
         if (props.partnerData.find(o => o.id === props.option)) {
@@ -33,8 +33,8 @@ export default function Option(props) {
 
     function handleCorrectChange(event) {
         // editCorrect(event.target.value);
-        props.onSetCorrect(event.target.value);
-        console.log(event.target.value)
+        props.editing && props.onSetCorrect(props.number);
+        // console.log(event.target.value)
     }
 
     function handleRemove() {
@@ -48,8 +48,8 @@ export default function Option(props) {
     return (
         <label
             draggable={dragging === 'true'}
-            className='item-option'
-            onClick={event => event.preventDefault()}>
+            className={correct ? 'item-option correct' : 'item-option'}
+            onClick={handleCorrectChange}>
             {props.editing ?
                 <button
                     title='remove option'
@@ -81,19 +81,6 @@ export default function Option(props) {
                 >
                     {option}
                 </button>
-            }
-            {props.thisPanel === 'questions' && props.editing &&
-                <div className='correct-option'>
-                    <div>
-                    </div>
-                    <input
-                        type='radio'
-                        name={props.group}
-                        value={props.number}
-                        checked={correct}
-                        onChange={handleCorrectChange}
-                    />
-                </div>
             }
             {props.editing &&
                 <DragHandle
