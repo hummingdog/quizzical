@@ -36,8 +36,10 @@ export default function Option(props) {
 
     return (
         <label
+            data-id={props.number}
+            data-number={props.number}
             draggable={dragging === 'true'}
-            className='item-option'
+            className={'item-option' + (props.editing ? ' editing' : '') + (props.number === props.correct ? ' selected-option' : '')}
             onClick={event => event.preventDefault()}>
             {props.editing ?
                 <button
@@ -72,12 +74,12 @@ export default function Option(props) {
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
-                <div className='correct-option'>
-                    <div
-                        className={props.number === props.correct ? 'selected-option' : ''}
-                        onClick={() => props.onSetCorrect(props.number)}
-                    />
-                </div>
+                <button
+                    aria-roledescription='radio button'
+                    className={'correct-option' + (props.number === props.correct ? ' selected-button' : '')}
+                    onClick={() => props.onSetCorrect(props.number)}
+                >
+                </button>
             }
             {props.editing &&
                 <DragHandle

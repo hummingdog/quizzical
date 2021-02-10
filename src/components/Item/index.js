@@ -72,20 +72,20 @@ export default function Item(props) {
     }
 
     function cancelItem() {
-        toggleEditingThis(false);
-        props.onSwitchEditing(false);
         if (item.id === 0) {
             props.onDeleteItem(props.item.id);
         } else {
             editItem( {...backupItem});
         }
+        toggleEditingThis(false);
+        props.onSwitchEditing(false);
     }
 
-    // function addOptionFromPanel() {
-    //     let newItem = [...item];
-    //     newItem.push(draggedItem.item);
-    //     editItem([...newItem]);
-    // }
+    function addOptionFromPanel() {
+        let newItem = {...item};
+        newItem.selection.push(draggedItem.item);
+        editItem({...newItem});
+    }
 
     function addOption() {
         let newItem = {...item};
@@ -110,67 +110,72 @@ export default function Item(props) {
         let newItem = {...item};
         newItem.correct = +i;
         editItem({...newItem});
-        console.log(newItem)
     }
 
-    // function startDrag(event) {
-    //     draggedItem = {
-    //         item: event.currentTarget.id,
-    //         number: +event.currentTarget.dataset.number,
-    //         panel: event.currentTarget.dataset.panel,
-    //         length: +event.currentTarget.dataset.length
-    //     };
-    // }
+    function startDrag(event) {
+        if (!event.currentTarget.classList.contains('item-option')) {
+            draggedItem = {
+                item: event.currentTarget.dataset.id,
+                number: +event.currentTarget.dataset.number,
+                panel: event.currentTarget.dataset.panel,
+                length: +event.currentTarget.dataset.length
+            };
+        }
+    }
 
-    // function enterDrag(event) {
-    //     draggedItemTarget = {
-    //         item: event.currentTarget.id,
-    //         number: +event.currentTarget.dataset.number,
-    //         panel: event.currentTarget.dataset.panel,
-    //         length: +event.currentTarget.dataset.length
-    //     };
-    //     if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
-    //     if (draggedItem.number + 1 === draggedItemTarget.number) {
-    //         // event.currentTarget.classList.add('drop-item');
-    //         event.dataTransfer.dropEffect = 'copy';
-    //     }
-    // }
+    function enterDrag(event) {
+        draggedItemTarget = {
+            item: event.currentTarget.id,
+            number: +event.currentTarget.dataset.number,
+            panel: event.currentTarget.dataset.panel,
+            length: +event.currentTarget.dataset.length
+        };
+        if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
+        if (draggedItem.number + 1 === draggedItemTarget.number) {
+            // event.currentTarget.classList.add('drop-item');
+            event.dataTransfer.dropEffect = 'copy';
+        }
+    }
 
-    // function overDrag(event) {
-    //     event.preventDefault();
-    //     if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
-    //         event.dataTransfer.dropEffect = 'none';
-    //     } else {
-    //         event.dataTransfer.dropEffect = 'copy';
-    //     }
-    // }
+    function overDrag(event) {
+        event.preventDefault();
+        if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
+            event.dataTransfer.dropEffect = 'none';
+        } else {
+            event.dataTransfer.dropEffect = 'copy';
+        }
+    }
 
-    // function exitDrag(event) {
-    //     event.currentTarget.classList.remove('dropItem');
-    // }
+    function exitDrag(event) {
+        event.currentTarget.classList.remove('dropItem');
+    }
 
-    // function endDrag(event) {
-    //     event.currentTarget.classList.remove('dropItem');
-    // }
+    function endDrag(event) {
+        event.currentTarget.classList.remove('dropItem');
+        draggedItem = {};
+        draggedItemTarget = {};
+    }
 
-    // function drop(event) {
-    //     addOptionFromPanel();
-    //     event.currentTarget.classList.remove('dropItem');
-    // }
+    function drop(event) {
+        addOptionFromPanel();
+        event.currentTarget.classList.remove('dropItem');
+        draggedItem = {};
+        draggedItemTarget = {};
+    }
 
     return (
         <div
-            id={item.id}
+            data-id={item.id}
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={item.selection.length}
             draggable={itemComplete && !editingThis}
-            // onDragStart={startDrag}
-            // onDragEnter={enterDrag}
-            // onDragOver={overDrag}
-            // onDragExit={exitDrag}
-            // onDragEnd={endDrag}
-            // onDrop={drop}
+            onDragStart={startDrag}
+            onDragEnter={enterDrag}
+            onDragOver={overDrag}
+            onDragExit={exitDrag}
+            onDragEnd={endDrag}
+            onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -223,7 +228,7 @@ export default function Item(props) {
                             onRemoveOption={removeOption}
                         />
                     )}
-                    {props.thisPanel === 'questions' && item.selection.length < 4 && props.editing &&
+                    {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
                     <button
                         title='add an option'
                         className='add-option'

@@ -9,7 +9,7 @@
     border-radius: var(--border-rounded);
 }
 
-.my-questions .item-option {
+.my-questions .item-option.editing {
     grid-template-columns: 50px 1fr 50px 50px;
 }
 
@@ -23,14 +23,14 @@ section input.item-option-input {
     box-shadow: none;
 }
 
-.my-questions .item-option button, .my-rounds .item-option button, .my-quizzes .item-option button {
+section .item-option button {
     color: var(--main-text-color);
-    background: var(--high-bg-color);
+    background: transparent;
     border: none;
     box-shadow: none;
 }
 
-.correct-option div {
+section button.correct-option {
     width: 30px;
     height: 30px;
     margin: 0;
@@ -40,7 +40,11 @@ section input.item-option-input {
     transition: 0.2s ease;
 }
 
-.correct-option .selected-option {
+.selected-option {
+    background: var(--my-questions-color-2);
+}
+
+section button.selected-button {
     background: var(--my-questions-color);
 }
 
