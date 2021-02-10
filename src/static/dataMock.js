@@ -5,10 +5,10 @@ export const questions = [
         private: true,
         text: 'Which famous novelist wrote the children\'s story Chitty-Chitty-Bang-Bang?',
         selection: [
-            'Joseph Conrad',
-            'P.L. Travers',
-            'Ian Fleming',
-            'J.M. Barrie'
+            {id: 1, text: 'Joseph Conrad'},
+            {id: 2, text: 'P.L. Travers'},
+            {id: 3, text: 'Ian Fleming'},
+            {id: 4, text: 'J.M. Barrie'}
         ],
         correct: 2
     },{

@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import ItemHeader from '../ItemHeader';
 import ItemText from '../ItemText';
 import Option from '../Option';
@@ -6,6 +8,7 @@ import DragHandle from '../DragHandle';
 import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/colorBlocks.css';
+import {generateUniqueID} from "web-vitals/dist/lib/generateUniqueID";
 
 export let draggedEl = {};
 export let draggedElTarget = {};
@@ -18,6 +21,8 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
+    const [optionsState, setOptionsState] = useState({ options: props.item.selection });
+
 
     useEffect(() => {
         editItem({...props.item});
@@ -29,8 +34,8 @@ export default function Item(props) {
 
     function checkComplete(length = 1) {
         let c = true;
-        if (length === 0 || item.text.length === 0 || item.selection.length < 2) c = false;
-        item.selection.forEach(option => { if (option.length === 0) c = false; });
+        if (length === 0 || item.text.length === 0 || item.selection.text.length < 2) c = false;
+        item.selection.forEach(option => { if (option.text.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
     }
@@ -98,7 +103,7 @@ export default function Item(props) {
 
     function addOption() {
         let newItem = {...item};
-        newItem.selection.push('');
+        newItem.selection.push({id: generateUniqueID(), text: ''});
         editItem({...newItem});
     }
 
@@ -203,6 +208,32 @@ export default function Item(props) {
         draggedElTarget = {};
     }
 
+    const reorder = (list, startIndex, endIndex) => {
+        const result = Array.from(list);
+        const [removed] = result.splice(startIndex, 1);
+        result.splice(endIndex, 0, removed);
+
+        return result;
+    };
+
+    function onDragEnd(result) {
+        if (!result.destination) {
+            return;
+        }
+
+        if (result.destination.index === result.source.index) {
+            return;
+        }
+
+        const options = reorder(
+            optionsState.options,
+            result.source.index,
+            result.destination.index
+        );
+
+        setOptionsState({ options });
+    }
+
     return (
         <div
             data-id={item.id}
@@ -249,35 +280,45 @@ export default function Item(props) {
                 onEditItemText={editItemText}
             />
             {expanded && props.panelExpanded &&
-                <div className='item-options'>
-                    {item.selection.map((o, i) =>
-                        <Option
-                            key={o + i}
-                            number={i}
-                            option={o}
-                            item={item}
-                            correct={item.correct}
-                            partnerData={props.partnerData}
-                            editing={props.editing && editingThis}
-                            thisPanel={props.thisPanel}
-                            group={item.text}
-                            onCheckComplete={checkComplete}
-                            onStartEdit={startEdit}
-                            onSetCorrect={setCorrect}
-                            onEditOption={editOption}
-                            onRemoveOption={removeOption}
-                        />
-                    )}
-                    {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
-                    <button
-                        title='add an option'
-                        className='add-option'
-                        onClick={addOption}
-                    >
-                        + add option
-                    </button>
-                    }
-                </div>
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="list">
+                        {provided => (
+                            <div className='item-options'
+                                 ref={provided.innerRef}
+                                 {...provided.droppableProps}>
+                                ]
+                                {optionsState.options.map((o, i) =>
+                                    <Option
+                                        key={o + i}
+                                        number={i}
+                                        option={o}
+                                        item={item}
+                                        correct={item.correct}
+                                        partnerData={props.partnerData}
+                                        editing={props.editing && editingThis}
+                                        thisPanel={props.thisPanel}
+                                        group={item.text}
+                                        onCheckComplete={checkComplete}
+                                        onStartEdit={startEdit}
+                                        onSetCorrect={setCorrect}
+                                        onEditOption={editOption}
+                                        onRemoveOption={removeOption}
+                                    />
+                                )}
+                                {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
+                                <button
+                                    title='add an option'
+                                    className='add-option'
+                                    onClick={addOption}
+                                >
+                                    + add option
+                                </button>
+                                }
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
             }
             {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
                 <DragHandle

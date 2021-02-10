@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
-import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export default function Panel(props) {
 
