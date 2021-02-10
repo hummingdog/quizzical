@@ -36,8 +36,8 @@ export default function Option(props) {
 
     return (
         <label
-            data-id={props.number}
-            data-number={props.number}
+            data-id={props.item.id}
+            data-option={props.number}
             draggable={dragging === 'true'}
             className={'item-option' + (props.editing ? ' editing' : '') + (props.number === props.correct ? ' selected-option' : '')}
             onClick={event => event.preventDefault()}>

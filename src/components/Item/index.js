@@ -7,8 +7,8 @@ import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/colorBlocks.css';
 
-export let draggedItem = {};
-export let draggedItemTarget = {};
+export let draggedEl = {};
+export let draggedElTarget = {};
 
 export default function Item(props) {
 
@@ -83,7 +83,16 @@ export default function Item(props) {
 
     function addOptionFromPanel() {
         let newItem = {...item};
-        newItem.selection.push(draggedItem.item);
+        newItem.selection.push(draggedEl.item);
+        editItem({...newItem});
+    }
+
+    function moveOptionInSelection(origin, destination) {
+        let newItem = {...item};
+        const optionToMove = newItem.selection[origin];
+        newItem.selection.splice(origin, 1);
+        newItem.selection.splice(destination, 0, optionToMove);
+        if (newItem.correct === origin) newItem.correct = destination;
         editItem({...newItem});
     }
 
@@ -113,36 +122,62 @@ export default function Item(props) {
     }
 
     function startDrag(event) {
-        if (!event.currentTarget.classList.contains('item-option')) {
-            draggedItem = {
+        if (!event.target.classList.contains('item-option')) {
+            draggedEl = {
+                draggingItem: true,
                 item: event.currentTarget.dataset.id,
                 number: +event.currentTarget.dataset.number,
                 panel: event.currentTarget.dataset.panel,
                 length: +event.currentTarget.dataset.length
             };
+        } else {
+            draggedEl = {
+                item: event.target.dataset.id,
+                option: +event.target.dataset.option
+            };
         }
     }
 
     function enterDrag(event) {
-        draggedItemTarget = {
-            item: event.currentTarget.id,
-            number: +event.currentTarget.dataset.number,
-            panel: event.currentTarget.dataset.panel,
-            length: +event.currentTarget.dataset.length
-        };
-        if (draggedItem.panel === 'questions' && draggedItem.length < 2) return false;
-        if (draggedItem.number + 1 === draggedItemTarget.number) {
-            // event.currentTarget.classList.add('drop-item');
-            event.dataTransfer.dropEffect = 'copy';
+        if (draggedEl.draggingItem && !event.target.classList.contains('item-option')) {
+            draggedElTarget = {
+                item: event.currentTarget.dataset.id,
+                number: +event.currentTarget.dataset.number,
+                panel: event.currentTarget.dataset.panel,
+                length: +event.currentTarget.dataset.length
+            };
+            if (draggedEl.panel === 'questions' && draggedEl.length < 2) return false;
+            if (draggedEl.number + 1 === draggedElTarget.number) {
+                // event.currentTarget.classList.add('drop-item');
+                event.dataTransfer.dropEffect = 'copy';
+            }
+        } else {
+            draggedElTarget = {
+                item: event.target.dataset.id,
+                option: +event.target.dataset.option
+            };
+            if (draggedEl.item === draggedElTarget.item) {
+                event.dataTransfer.dropEffect = 'move';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+            }
         }
     }
 
     function overDrag(event) {
         event.preventDefault();
-        if ((draggedItem.panel === 'questions' && draggedItem.length < 2) || (draggedItem.number + 1 !== draggedItemTarget.number)) {
-            event.dataTransfer.dropEffect = 'none';
+        if (draggedEl.draggingItem) {
+            if ((draggedEl.panel === 'questions' && draggedEl.length < 2) || (draggedEl.number + 1 !== draggedElTarget.number)) {
+                event.dataTransfer.dropEffect = 'none';
+            } else {
+                event.dataTransfer.dropEffect = 'copy';
+            }
         } else {
-            event.dataTransfer.dropEffect = 'copy';
+            if (draggedEl.option === undefined || draggedElTarget.option === undefined) {
+                event.dataTransfer.dropEffect = 'none';
+            } else {
+                event.dataTransfer.dropEffect = 'move';
+            }
         }
     }
 
@@ -152,15 +187,20 @@ export default function Item(props) {
 
     function endDrag(event) {
         event.currentTarget.classList.remove('dropItem');
-        draggedItem = {};
-        draggedItemTarget = {};
+        draggedEl = {};
+        draggedElTarget = {};
     }
 
     function drop(event) {
-        addOptionFromPanel();
+        if (draggedEl.draggingItem) {
+            addOptionFromPanel();
+        } else {
+            moveOptionInSelection(draggedEl.option, draggedElTarget.option);
+            console.log(draggedEl.option, draggedElTarget.option);
+        }
         event.currentTarget.classList.remove('dropItem');
-        draggedItem = {};
-        draggedItemTarget = {};
+        draggedEl = {};
+        draggedElTarget = {};
     }
 
     return (

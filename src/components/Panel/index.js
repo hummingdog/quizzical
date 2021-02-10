@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
-import {draggedItem, draggedItemTarget} from '../Item';
+import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
 
 export default function Panel(props) {
