@@ -36,12 +36,12 @@ export default function Option(props) {
     }
 
     return (
-        <Draggable draggableId={'id-' + option.id} index={props.number}>
-            {provided => (
-                <label
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+        // <Draggable draggableId={'id-' + option.id} index={props.number}>
+        //     {provided => (
+                <div
+                    // ref={provided.innerRef}
+                    // {...provided.draggableProps}
+                    // {...provided.dragHandleProps}
                     data-id={props.item.id}
                     data-option={props.number}
                     draggable={dragging === 'true'}
@@ -94,8 +94,8 @@ export default function Option(props) {
                             onToggleDragging={toggleDragging}
                         />
                     }
-                </label>
-            )}
-        </Draggable>
+                </div>
+        //     )}
+        // </Draggable>
     );
 }

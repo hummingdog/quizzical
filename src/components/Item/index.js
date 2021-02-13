@@ -13,6 +13,33 @@ import {generateUniqueID} from "web-vitals/dist/lib/generateUniqueID";
 export let draggedEl = {};
 export let draggedElTarget = {};
 
+const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+};
+
+const move = (source, destination, droppableSource, droppableDestination) => {
+    const sourceClone = Array.from(source);
+    const destClone = Array.from(destination);
+    const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+    destClone.splice(droppableDestination.index, 0, removed);
+
+    if (destClone.length > 2) {
+        const [last] = destClone.splice(2,1)
+        sourceClone.splice(0, 0, last)
+    }
+
+    const result = {};
+    result[droppableSource.droppableId] = sourceClone;
+    result[droppableDestination.droppableId] = destClone;
+
+    return result;
+};
+
 export default function Item(props) {
 
     const [item, editItem] = useState({...props.item});
@@ -21,7 +48,10 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
-    const [optionsState, setOptionsState] = useState({ options: props.item.selection });
+    const [answers, setAnswers] = useState(
+        [[props.item.selection[0], props.item.selection[1]],
+            [props.item.selection[2], props.item.selection[3]]]
+    );
 
 
     useEffect(() => {
@@ -92,14 +122,14 @@ export default function Item(props) {
         editItem({...newItem});
     }
 
-    function moveOptionInSelection(origin, destination) {
-        let newItem = {...item};
-        const optionToMove = newItem.selection[origin];
-        newItem.selection.splice(origin, 1);
-        newItem.selection.splice(destination, 0, optionToMove);
-        if (newItem.correct === origin) newItem.correct = destination;
-        editItem({...newItem});
-    }
+    // function moveOptionInSelection(origin, destination) {
+    //     let newItem = {...item};
+    //     const optionToMove = newItem.selection[origin];
+    //     newItem.selection.splice(origin, 1);
+    //     newItem.selection.splice(destination, 0, optionToMove);
+    //     if (newItem.correct === origin) newItem.correct = destination;
+    //     editItem({...newItem});
+    // }
 
     function addOption() {
         let newItem = {...item};
@@ -126,112 +156,113 @@ export default function Item(props) {
         editItem({...newItem});
     }
 
-    function startDrag(event) {
-        if (!event.target.classList.contains('item-option')) {
-            draggedEl = {
-                draggingItem: true,
-                item: event.currentTarget.dataset.id,
-                number: +event.currentTarget.dataset.number,
-                panel: event.currentTarget.dataset.panel,
-                length: +event.currentTarget.dataset.length
-            };
-        } else {
-            draggedEl = {
-                item: event.target.dataset.id,
-                option: +event.target.dataset.option
-            };
-        }
-    }
+    // function startDrag(event) {
+    //     if (!event.target.classList.contains('item-option')) {
+    //         draggedEl = {
+    //             draggingItem: true,
+    //             item: event.currentTarget.dataset.id,
+    //             number: +event.currentTarget.dataset.number,
+    //             panel: event.currentTarget.dataset.panel,
+    //             length: +event.currentTarget.dataset.length
+    //         };
+    //     } else {
+    //         draggedEl = {
+    //             item: event.target.dataset.id,
+    //             option: +event.target.dataset.option
+    //         };
+    //     }
+    // }
 
-    function enterDrag(event) {
-        if (draggedEl.draggingItem && !event.target.classList.contains('item-option')) {
-            draggedElTarget = {
-                item: event.currentTarget.dataset.id,
-                number: +event.currentTarget.dataset.number,
-                panel: event.currentTarget.dataset.panel,
-                length: +event.currentTarget.dataset.length
-            };
-            if (draggedEl.panel === 'questions' && draggedEl.length < 2) return false;
-            if (draggedEl.number + 1 === draggedElTarget.number) {
-                // event.currentTarget.classList.add('drop-item');
-                event.dataTransfer.dropEffect = 'copy';
-            }
-        } else {
-            draggedElTarget = {
-                item: event.target.dataset.id,
-                option: +event.target.dataset.option
-            };
-            if (draggedEl.item === draggedElTarget.item) {
-                event.dataTransfer.dropEffect = 'move';
-            } else {
-                event.dataTransfer.dropEffect = 'none';
-            }
-        }
-    }
+    // function enterDrag(event) {
+    //     if (draggedEl.draggingItem && !event.target.classList.contains('item-option')) {
+    //         draggedElTarget = {
+    //             item: event.currentTarget.dataset.id,
+    //             number: +event.currentTarget.dataset.number,
+    //             panel: event.currentTarget.dataset.panel,
+    //             length: +event.currentTarget.dataset.length
+    //         };
+    //         if (draggedEl.panel === 'questions' && draggedEl.length < 2) return false;
+    //         if (draggedEl.number + 1 === draggedElTarget.number) {
+    //             // event.currentTarget.classList.add('drop-item');
+    //             event.dataTransfer.dropEffect = 'copy';
+    //         }
+    //     } else {
+    //         draggedElTarget = {
+    //             item: event.target.dataset.id,
+    //             option: +event.target.dataset.option
+    //         };
+    //         if (draggedEl.item === draggedElTarget.item) {
+    //             event.dataTransfer.dropEffect = 'move';
+    //         } else {
+    //             event.dataTransfer.dropEffect = 'none';
+    //         }
+    //     }
+    // }
 
-    function overDrag(event) {
-        event.preventDefault();
-        if (draggedEl.draggingItem) {
-            if ((draggedEl.panel === 'questions' && draggedEl.length < 2) || (draggedEl.number + 1 !== draggedElTarget.number)) {
-                event.dataTransfer.dropEffect = 'none';
-            } else {
-                event.dataTransfer.dropEffect = 'copy';
-            }
-        } else {
-            if (draggedEl.option === undefined || draggedElTarget.option === undefined) {
-                event.dataTransfer.dropEffect = 'none';
-            } else {
-                event.dataTransfer.dropEffect = 'move';
-            }
-        }
-    }
+    // function overDrag(event) {
+    //     event.preventDefault();
+    //     if (draggedEl.draggingItem) {
+    //         if ((draggedEl.panel === 'questions' && draggedEl.length < 2) || (draggedEl.number + 1 !== draggedElTarget.number)) {
+    //             event.dataTransfer.dropEffect = 'none';
+    //         } else {
+    //             event.dataTransfer.dropEffect = 'copy';
+    //         }
+    //     } else {
+    //         if (draggedEl.option === undefined || draggedElTarget.option === undefined) {
+    //             event.dataTransfer.dropEffect = 'none';
+    //         } else {
+    //             event.dataTransfer.dropEffect = 'move';
+    //         }
+    //     }
+    // }
+    //
+    // function exitDrag(event) {
+    //     event.currentTarget.classList.remove('dropItem');
+    // }
+    //
+    // function endDrag(event) {
+    //     event.currentTarget.classList.remove('dropItem');
+    //     draggedEl = {};
+    //     draggedElTarget = {};
+    // }
 
-    function exitDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-    }
+    // function drop(event) {
+    //     if (draggedEl.draggingItem) {
+    //         addOptionFromPanel();
+    //     } else {
+    //         moveOptionInSelection(draggedEl.option, draggedElTarget.option);
+    //         console.log(draggedEl.option, draggedElTarget.option);
+    //     }
+    //     event.currentTarget.classList.remove('dropItem');
+    //     draggedEl = {};
+    //     draggedElTarget = {};
+    // }
 
-    function endDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-        draggedEl = {};
-        draggedElTarget = {};
-    }
 
-    function drop(event) {
-        if (draggedEl.draggingItem) {
-            addOptionFromPanel();
-        } else {
-            moveOptionInSelection(draggedEl.option, draggedElTarget.option);
-            console.log(draggedEl.option, draggedElTarget.option);
-        }
-        event.currentTarget.classList.remove('dropItem');
-        draggedEl = {};
-        draggedElTarget = {};
-    }
-
-    const reorder = (list, startIndex, endIndex) => {
-        const result = Array.from(list);
-        const [removed] = result.splice(startIndex, 1);
-        result.splice(endIndex, 0, removed);
-
-        return result;
-    };
 
     function onDragEnd(result) {
-        if (!result.destination) {
+        const { source, destination } = result;
+
+        // dropped outside the list
+        if (!destination) {
             return;
         }
+        const sInd = +source.droppableId;
+        const dInd = +destination.droppableId;
 
-        if (result.destination.index === result.source.index) {
-            return;
+        if (sInd === dInd) {
+            const items = reorder(answers[sInd], source.index, destination.index);
+            const newAnswers = [...answers];
+            newAnswers[sInd] = items;
+            setAnswers(newAnswers);
+        } else {
+            const result = move(answers[sInd], answers[dInd], source, destination);
+            const newAnswers = [...answers];
+            newAnswers[sInd] = result[sInd];
+            newAnswers[dInd] = result[dInd];
+
+            setAnswers(newAnswers.filter(group => group.length));
         }
-
-        const options = reorder(
-            optionsState.options,
-            result.source.index,
-            result.destination.index
-        );
-
-        setOptionsState({ options });
     }
 
     return (
@@ -241,12 +272,12 @@ export default function Item(props) {
             data-panel={props.thisPanel}
             data-length={item.selection.length}
             draggable={itemComplete && !editingThis}
-            onDragStart={startDrag}
-            onDragEnter={enterDrag}
-            onDragOver={overDrag}
-            onDragExit={exitDrag}
-            onDragEnd={endDrag}
-            onDrop={drop}
+            // onDragStart={startDrag}
+            // onDragEnter={enterDrag}
+            // onDragOver={overDrag}
+            // onDragExit={exitDrag}
+            // onDragEnd={endDrag}
+            // onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -280,45 +311,116 @@ export default function Item(props) {
                 onEditItemText={editItemText}
             />
             {expanded && props.panelExpanded &&
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="list">
-                        {provided => (
-                            <div className='item-options'
-                                 ref={provided.innerRef}
-                                 {...provided.droppableProps}>
-                                ]
-                                {optionsState.options.map((o, i) =>
-                                    <Option
-                                        key={o + i}
-                                        number={i}
-                                        option={o}
-                                        item={item}
-                                        correct={item.correct}
-                                        partnerData={props.partnerData}
-                                        editing={props.editing && editingThis}
-                                        thisPanel={props.thisPanel}
-                                        group={item.text}
-                                        onCheckComplete={checkComplete}
-                                        onStartEdit={startEdit}
-                                        onSetCorrect={setCorrect}
-                                        onEditOption={editOption}
-                                        onRemoveOption={removeOption}
-                                    />
+                <div className='item-options'>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        {answers.map((el, ind) => (
+                            <Droppable key={ind} droppableId={`${ind}`}>
+                                {(provided, snapshot) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                    >
+                                        {el.map((item, index) => (
+                                            <Draggable key={item.id} draggableId={`${item.id}`} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        // style={provided.draggableProps.style}
+                                                    >
+                                                        <Option
+                                                            key={item + index}
+                                                            number={index}
+                                                            option={item}
+                                                            item={item}
+                                                            correct={item.correct}
+                                                            partnerData={props.partnerData}
+                                                            editing={props.editing && editingThis}
+                                                            thisPanel={props.thisPanel}
+                                                            group={item.text}
+                                                            onCheckComplete={checkComplete}
+                                                            onStartEdit={startEdit}
+                                                            onSetCorrect={setCorrect}
+                                                            onEditOption={editOption}
+                                                            onRemoveOption={removeOption}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
                                 )}
-                                {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
-                                <button
-                                    title='add an option'
-                                    className='add-option'
-                                    onClick={addOption}
-                                >
-                                    + add option
-                                </button>
-                                }
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                            </Droppable>
+
+                        ))}
+                    </DragDropContext>
+                    {props.thisPanel === 'questions' && props.item.length < 4 && editingThis &&
+                    <button
+                        title='add an option'
+                        className='add-option'
+                        onClick={addOption}
+                    >
+                        + add option
+                    </button>
+                    }
+                    {/*<DragDropContext onDragEnd={onDragEnd}>*/}
+                    {/*    {answers.map((el, ind) => (*/}
+                    {/*        <Droppable key={ind} droppableId={`${ind}`}>*/}
+                    {/*            {(provided, snapshot) => (*/}
+                    {/*                <div className='item-options'*/}
+                    {/*                     ref={provided.innerRef}*/}
+                    {/*                     {...provided.droppableProps}*/}
+                    {/*                >*/}
+                    {/*                    {el.map((o, i) => (*/}
+                    {/*                        <Draggable*/}
+                    {/*                            key={o.id}*/}
+                    {/*                            draggableId={`${o.id}`}*/}
+                    {/*                            index={i}*/}
+                    {/*                        >*/}
+                    {/*                            {(provided, snapshot) => (*/}
+                    {/*                                <div*/}
+                    {/*                                    ref={provided.innerRef}*/}
+                    {/*                                    {...provided.draggableProps}*/}
+                    {/*                                    {...provided.dragHandleProps}*/}
+                    {/*                                >*/}
+                    {/*                                    <Option*/}
+                    {/*                                        key={o + i}*/}
+                    {/*                                        number={i}*/}
+                    {/*                                        option={o}*/}
+                    {/*                                        item={item}*/}
+                    {/*                                        correct={item.correct}*/}
+                    {/*                                        partnerData={props.partnerData}*/}
+                    {/*                                        editing={props.editing && editingThis}*/}
+                    {/*                                        thisPanel={props.thisPanel}*/}
+                    {/*                                        group={item.text}*/}
+                    {/*                                        onCheckComplete={checkComplete}*/}
+                    {/*                                        onStartEdit={startEdit}*/}
+                    {/*                                        onSetCorrect={setCorrect}*/}
+                    {/*                                        onEditOption={editOption}*/}
+                    {/*                                        onRemoveOption={removeOption}*/}
+                    {/*                                    />*/}
+                    {/*                                    {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&*/}
+                    {/*                                        <button*/}
+                    {/*                                            title='add an option'*/}
+                    {/*                                            className='add-option'*/}
+                    {/*                                            onClick={addOption}*/}
+                    {/*                                        >*/}
+                    {/*                                            + add option*/}
+                    {/*                                        </button>*/}
+                    {/*                                    }*/}
+                    {/*                                </div>*/}
+                    {/*                            )}*/}
+                    {/*                        </Draggable>*/}
+                    {/*                    ))}*/}
+                    {/*                    {provided.placeholder}*/}
+                    {/*                </div>*/}
+                    {/*            )}*/}
+                    {/*        </Droppable>*/}
+                    {/*    ))}*/}
+                    {/*</DragDropContext>*/}
+                </div>
             }
             {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
                 <DragHandle
