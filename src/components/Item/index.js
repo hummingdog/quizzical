@@ -7,9 +7,6 @@ import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/colorBlocks.css';
 
-export let draggedEl = {};
-export let draggedElTarget = {};
-
 export default function Item(props) {
 
     const [item, editItem] = useState({...props.item});
@@ -18,6 +15,8 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
+    const [draggedEl, setDraggedEl] = useState({})
+    const [draggedElTarget, setDraggedElTarget] = useState({})
 
     useEffect(() => {
         editItem({...props.item});
@@ -30,7 +29,7 @@ export default function Item(props) {
     function checkComplete(length = 1) {
         let c = true;
         if (length === 0 || item.text.length === 0 || item.selection.length < 2) c = false;
-        item.selection.forEach(option => { if (option.length === 0) c = false; });
+        item.selection.forEach(option => { if (option.text.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
     }
@@ -92,19 +91,20 @@ export default function Item(props) {
         const optionToMove = newItem.selection[origin];
         newItem.selection.splice(origin, 1);
         newItem.selection.splice(destination, 0, optionToMove);
-        if (newItem.correct === origin) newItem.correct = destination;
+        // if (newItem.correct === destination) newItem.correct = destination - 1;
+        // else if (newItem.correct === origin) newItem.correct = destination;
         editItem({...newItem});
     }
 
     function addOption() {
         let newItem = {...item};
-        newItem.selection.push('');
+        newItem.selection.push({});
         editItem({...newItem});
     }
 
     function editOption(i, option) {
         let newItem = {...item};
-        newItem.selection[i] = option;
+        newItem.selection[i].text = option;
         editItem({...newItem});
     }
 
@@ -123,39 +123,46 @@ export default function Item(props) {
 
     function startDrag(event) {
         if (!event.target.classList.contains('item-option')) {
-            draggedEl = {
+            setDraggedEl({
                 draggingItem: true,
-                item: event.currentTarget.dataset.id,
-                number: +event.currentTarget.dataset.number,
-                panel: event.currentTarget.dataset.panel,
-                length: +event.currentTarget.dataset.length
-            };
+                item: event.target.dataset.id,
+                number: +event.target.dataset.number,
+                panel: event.target.dataset.panel,
+                length: +event.target.dataset.length
+            });
         } else {
-            draggedEl = {
+            setDraggedEl({
                 item: event.target.dataset.id,
                 option: +event.target.dataset.option
-            };
+            });
         }
     }
 
+    function endDrag(event) {
+        // event.currentTarget.classList.remove('dropItem');
+        setDraggedEl({});
+        setDraggedElTarget({});
+    }
+
     function enterDrag(event) {
+        event.preventDefault()
         if (draggedEl.draggingItem && !event.target.classList.contains('item-option')) {
-            draggedElTarget = {
+            setDraggedElTarget({
                 item: event.currentTarget.dataset.id,
                 number: +event.currentTarget.dataset.number,
                 panel: event.currentTarget.dataset.panel,
                 length: +event.currentTarget.dataset.length
-            };
+            });
             if (draggedEl.panel === 'questions' && draggedEl.length < 2) return false;
             if (draggedEl.number + 1 === draggedElTarget.number) {
                 // event.currentTarget.classList.add('drop-item');
                 event.dataTransfer.dropEffect = 'copy';
             }
         } else {
-            draggedElTarget = {
-                item: event.target.dataset.id,
-                option: +event.target.dataset.option
-            };
+            setDraggedElTarget({
+                item: event.currentTarget.dataset.id,
+                option: +event.currentTarget.dataset.option
+            });
             if (draggedEl.item === draggedElTarget.item) {
                 event.dataTransfer.dropEffect = 'move';
             } else {
@@ -182,13 +189,7 @@ export default function Item(props) {
     }
 
     function exitDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-    }
-
-    function endDrag(event) {
-        event.currentTarget.classList.remove('dropItem');
-        draggedEl = {};
-        draggedElTarget = {};
+        // event.currentTarget.classList.remove('dropItem');
     }
 
     function drop(event) {
@@ -196,24 +197,24 @@ export default function Item(props) {
             addOptionFromPanel();
         } else {
             moveOptionInSelection(draggedEl.option, draggedElTarget.option);
-            console.log(draggedEl.option, draggedElTarget.option);
         }
-        event.currentTarget.classList.remove('dropItem');
-        draggedEl = {};
-        draggedElTarget = {};
+        // event.currentTarget.classList.remove('dropItem');
+        setDraggedEl({});
+        setDraggedElTarget({});
     }
 
     return (
         <div
+            data-name={'item'}
             data-id={item.id}
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={item.selection.length}
             draggable={itemComplete && !editingThis}
+            // onDragEnter={enterDrag}
+            // onDragOver={overDrag}
+            // onDragLeave={exitDrag}
             onDragStart={startDrag}
-            onDragEnter={enterDrag}
-            onDragOver={overDrag}
-            onDragExit={exitDrag}
             onDragEnd={endDrag}
             onDrop={drop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
@@ -251,22 +252,30 @@ export default function Item(props) {
             {expanded && props.panelExpanded &&
                 <div className='item-options'>
                     {item.selection.map((o, i) =>
-                        <Option
-                            key={o + i}
-                            number={i}
-                            option={o}
-                            item={item}
-                            correct={item.correct}
-                            partnerData={props.partnerData}
-                            editing={props.editing && editingThis}
-                            thisPanel={props.thisPanel}
-                            group={item.text}
-                            onCheckComplete={checkComplete}
-                            onStartEdit={startEdit}
-                            onSetCorrect={setCorrect}
-                            onEditOption={editOption}
-                            onRemoveOption={removeOption}
-                        />
+                        <div
+                            key={o.id}
+                        >
+                            <Option
+                                number={i}
+                                option={o.text}
+                                item={item}
+                                correct={item.correct === o.id}
+                                partnerData={props.partnerData}
+                                editing={props.editing && editingThis}
+                                thisPanel={props.thisPanel}
+                                group={item.text}
+                                onCheckComplete={checkComplete}
+                                onStartEdit={startEdit}
+                                onSetCorrect={setCorrect}
+                                onEditOption={editOption}
+                                onRemoveOption={removeOption}
+                                onDragStart={startDrag}
+                                onDragEnd={endDrag}
+                                onDragEnter={enterDrag}
+                                onDragOver={overDrag}
+                                onDragLeave={exitDrag}
+                            />
+                        </div>
                     )}
                     {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
                     <button
