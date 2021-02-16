@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import ItemHeader from '../ItemHeader';
 import ItemText from '../ItemText';
 import Option from '../Option';
@@ -15,8 +15,7 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
-    const [draggedEl, setDraggedEl] = useState({})
-    const [draggedElTarget, setDraggedElTarget] = useState({})
+    // const targetEl = useRef(null)
 
     useEffect(() => {
         editItem({...props.item});
@@ -80,22 +79,6 @@ export default function Item(props) {
         props.onSwitchEditing(false);
     }
 
-    function addOptionFromPanel() {
-        let newItem = {...item};
-        newItem.selection.push(draggedEl.item);
-        editItem({...newItem});
-    }
-
-    function moveOptionInSelection(origin, destination) {
-        let newItem = {...item};
-        const optionToMove = newItem.selection[origin];
-        newItem.selection.splice(origin, 1);
-        newItem.selection.splice(destination, 0, optionToMove);
-        // if (newItem.correct === destination) newItem.correct = destination - 1;
-        // else if (newItem.correct === origin) newItem.correct = destination;
-        editItem({...newItem});
-    }
-
     function addOption() {
         let newItem = {...item};
         newItem.selection.push({});
@@ -121,88 +104,6 @@ export default function Item(props) {
         editItem({...newItem});
     }
 
-    function startDrag(event) {
-        if (!event.target.classList.contains('item-option')) {
-            setDraggedEl({
-                draggingItem: true,
-                item: event.target.dataset.id,
-                number: +event.target.dataset.number,
-                panel: event.target.dataset.panel,
-                length: +event.target.dataset.length
-            });
-        } else {
-            setDraggedEl({
-                item: event.target.dataset.id,
-                option: +event.target.dataset.option
-            });
-        }
-    }
-
-    function endDrag(event) {
-        // event.currentTarget.classList.remove('dropItem');
-        setDraggedEl({});
-        setDraggedElTarget({});
-    }
-
-    function enterDrag(event) {
-        event.preventDefault()
-        if (draggedEl.draggingItem && !event.target.classList.contains('item-option')) {
-            setDraggedElTarget({
-                item: event.currentTarget.dataset.id,
-                number: +event.currentTarget.dataset.number,
-                panel: event.currentTarget.dataset.panel,
-                length: +event.currentTarget.dataset.length
-            });
-            if (draggedEl.panel === 'questions' && draggedEl.length < 2) return false;
-            if (draggedEl.number + 1 === draggedElTarget.number) {
-                // event.currentTarget.classList.add('drop-item');
-                event.dataTransfer.dropEffect = 'copy';
-            }
-        } else {
-            setDraggedElTarget({
-                item: event.currentTarget.dataset.id,
-                option: +event.currentTarget.dataset.option
-            });
-            if (draggedEl.item === draggedElTarget.item) {
-                event.dataTransfer.dropEffect = 'move';
-            } else {
-                event.dataTransfer.dropEffect = 'none';
-            }
-        }
-    }
-
-    function overDrag(event) {
-        event.preventDefault();
-        if (draggedEl.draggingItem) {
-            if ((draggedEl.panel === 'questions' && draggedEl.length < 2) || (draggedEl.number + 1 !== draggedElTarget.number)) {
-                event.dataTransfer.dropEffect = 'none';
-            } else {
-                event.dataTransfer.dropEffect = 'copy';
-            }
-        } else {
-            if (draggedEl.option === undefined || draggedElTarget.option === undefined) {
-                event.dataTransfer.dropEffect = 'none';
-            } else {
-                event.dataTransfer.dropEffect = 'move';
-            }
-        }
-    }
-
-    function exitDrag(event) {
-        // event.currentTarget.classList.remove('dropItem');
-    }
-
-    function drop(event) {
-        if (draggedEl.draggingItem) {
-            addOptionFromPanel();
-        } else {
-            moveOptionInSelection(draggedEl.option, draggedElTarget.option);
-        }
-        // event.currentTarget.classList.remove('dropItem');
-        setDraggedEl({});
-        setDraggedElTarget({});
-    }
-
     return (
         <div
             data-name={'item'}
@@ -211,12 +112,13 @@ export default function Item(props) {
             data-panel={props.thisPanel}
             data-length={item.selection.length}
             draggable={itemComplete && !editingThis}
-            // onDragEnter={enterDrag}
-            // onDragOver={overDrag}
-            // onDragLeave={exitDrag}
-            onDragStart={startDrag}
-            onDragEnd={endDrag}
-            onDrop={drop}
+            onDragEnter={props.onDragEnter}
+            onDragOver={props.onDragOver}
+            onDragLeave={props.onDragLeave}
+            onDragStart={props.onDragStart}
+            onDragEnd={props.onDragEnd}
+            onDrop={props.onDrop}
+            // ref={targetEl}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -269,11 +171,12 @@ export default function Item(props) {
                                 onSetCorrect={setCorrect}
                                 onEditOption={editOption}
                                 onRemoveOption={removeOption}
-                                onDragStart={startDrag}
-                                onDragEnd={endDrag}
-                                onDragEnter={enterDrag}
-                                onDragOver={overDrag}
-                                onDragLeave={exitDrag}
+                                onDragEnter={props.onDragEnter}
+                                onDragOver={props.onDragOver}
+                                onDragLeave={props.onDragLeave}
+                                onDragStart={props.onDragStart}
+                                onDragEnd={props.onDragEnd}
+                                onDrop={props.onDrop}
                             />
                         </div>
                     )}

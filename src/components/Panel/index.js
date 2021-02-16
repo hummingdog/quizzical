@@ -103,6 +103,12 @@ export default function Panel(props) {
                         // onUpdateItem={updateItem}
                         onDeleteItem={deleteItem}
                         onSaveItem={saveItem}
+                        onDragEnter={props.onDragEnter}
+                        onDragOver={props.onDragOver}
+                        onDragLeave={props.onDragLeave}
+                        onDragStart={props.onDragStart}
+                        onDragEnd={props.onDragEnd}
+                        onDrop={props.onDrop}
                     />
                 )}
             </div>
