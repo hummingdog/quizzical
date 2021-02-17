@@ -6,11 +6,11 @@ import './panel.css';
 
 export default function Panel(props) {
 
-    const [data, editData] = useState([...props.data]);
+    const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
 
     useEffect(() => {
-        editData([...props.data]);
+        editData(props.data);
     }, [props.reset, props.data]);
 
     function addItem() {
@@ -85,9 +85,9 @@ export default function Panel(props) {
             <div
                 className='panel-content'
             >
-                {data.map(item =>
+                {data.map((item, i) =>
                     <Item
-                        key={'item' + item.id}
+                        key={'item' + item.id + i}
                         item={item}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}

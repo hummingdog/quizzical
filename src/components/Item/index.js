@@ -9,8 +9,8 @@ import '../../static/colorBlocks.css';
 
 export default function Item(props) {
 
-    const [item, editItem] = useState({...props.item});
-    const [backupItem, editBackupItem] = useState({...props.item});
+    const [item, editItem] = useState(props.item);
+    const [backupItem, editBackupItem] = useState(props.item);
     const [expanded, toggleExpanded] = useState(props.item.id === props.editingId);
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
@@ -18,7 +18,7 @@ export default function Item(props) {
     // const targetEl = useRef(null)
 
     useEffect(() => {
-        editItem({...props.item});
+        editItem(props.item);
     }, [props.item]);
 
     useEffect(() => {
@@ -56,14 +56,14 @@ export default function Item(props) {
     function editItemText(value) {
         let newItem = {...item};
         newItem.text = value;
-        editItem( {...newItem});
+        editItem(newItem);
     }
 
     function saveItem() {
         checkComplete();
         if (itemComplete) {
-            props.onSaveItem({...item});
-            editBackupItem({...item});
+            props.onSaveItem(item);
+            editBackupItem(item);
             toggleEditingThis(false);
             props.onSwitchEditing(false);
         }
@@ -73,7 +73,7 @@ export default function Item(props) {
         if (item.id === 0) {
             props.onDeleteItem(props.item.id);
         } else {
-            editItem( {...backupItem});
+            editItem(backupItem);
         }
         toggleEditingThis(false);
         props.onSwitchEditing(false);
@@ -82,13 +82,13 @@ export default function Item(props) {
     function addOption() {
         let newItem = {...item};
         newItem.selection.push({});
-        editItem({...newItem});
+        editItem(newItem);
     }
 
     function editOption(i, option) {
         let newItem = {...item};
         newItem.selection[i].text = option;
-        editItem({...newItem});
+        editItem(newItem);
     }
 
     function removeOption(i) {

@@ -117,7 +117,12 @@ export default function Build() {
         switch(draggedElTarget.panel) {
             case 'rounds':
                 target = rounds.filter(round => round.id === draggedElTarget.item)[0]
-                target.selection.push(draggedEl.item)
+                let targetPos = rounds.indexOf(target)
+                let newRound = {...target}
+                newRound.selection.push(draggedEl.item)
+                let newRounds = [...rounds]
+                newRounds.splice(targetPos, 1, newRound)
+                editRounds(newRounds)
         }
         // let newItem = {...item};
         // newItem.selection.push(draggedEl.item);
@@ -125,12 +130,19 @@ export default function Build() {
     }
 
     function moveOptionInSelection(origin, destination) {
-        // let newItem = {...item};
-        // const optionToMove = newItem.selection[origin];
-        // newItem.selection.splice(origin, 1);
-        // newItem.selection.splice(destination, 0, optionToMove);
-        // // if (newItem.correct === destination) newItem.correct = destination - 1;
-        // // else if (newItem.correct === origin) newItem.correct = destination;
+
+        let target;
+        target = questions.filter(question => question.id = draggedElTarget.item)[0]
+
+        let newQuestions = [...questions];
+        let newQuestion = {...target}
+        const optionToMove = target.selection[origin];
+        newQuestion.selection.splice(origin, 1);
+        newQuestion.selection.splice(destination, 0, optionToMove);
+        newQuestions.splice(target, 1, newQuestion)
+        editQuestions(newQuestions)
+        // if (newItem.correct === destination) newItem.correct = destination - 1;
+        // else if (newItem.correct === origin) newItem.correct = destination;
         // editItem({...newItem});
     }
 
@@ -138,7 +150,7 @@ export default function Build() {
         if (!editing) {
             let changeExpanded = [...panels];
             changeExpanded.forEach((panel, j) => panel.expanded = i === j);
-            editPanels([...changeExpanded]);
+            editPanels(changeExpanded);
         }
     }
 
