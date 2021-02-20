@@ -87,7 +87,7 @@ export default function Panel(props) {
             >
                 {data.map((item, i) =>
                     <Item
-                        key={'item' + item.id + i}
+                        key={'item: ' + item.id}
                         item={item}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}

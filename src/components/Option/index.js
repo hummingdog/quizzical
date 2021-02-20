@@ -13,9 +13,9 @@ export default function Option(props) {
     }, [props.option, props.partnerData]);
 
     function getOption() {
-        if (props.partnerData.find(o => o.id === props.option)) {
-            let value = props.partnerData.find(o => o.id === props.option).text;
-            editOption([...value]);
+        if (props.partnerData.find(o => o.id === props.option.id)) {
+            let value = props.partnerData.find(o => o.id === props.option.id);
+            editOption(value);
         } else {
             props.onRemoveOption(props.number);
         }
@@ -67,7 +67,7 @@ export default function Option(props) {
             {props.thisPanel === 'questions' && props.editing ?
                 <input
                     className='item-option-input'
-                    value={option}
+                    value={option.text}
                     placeholder='type something!'
                     onChange={handleChange}
                     onBlur={() => props.onEditOption(props.number, option)}
@@ -76,7 +76,7 @@ export default function Option(props) {
                 <button
                     onClick={props.thisPanel === 'questions' ? props.onStartEdit : undefined}
                 >
-                    {option}
+                    {option.text}
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&

@@ -154,31 +154,28 @@ export default function Item(props) {
             {expanded && props.panelExpanded &&
                 <div className='item-options'>
                     {item.selection.map((o, i) =>
-                        <div
-                            key={o.id}
-                        >
-                            <Option
-                                number={i}
-                                option={o.text}
-                                item={item}
-                                correct={item.correct === o.id}
-                                partnerData={props.partnerData}
-                                editing={props.editing && editingThis}
-                                thisPanel={props.thisPanel}
-                                group={item.text}
-                                onCheckComplete={checkComplete}
-                                onStartEdit={startEdit}
-                                onSetCorrect={setCorrect}
-                                onEditOption={editOption}
-                                onRemoveOption={removeOption}
-                                onDragEnter={props.onDragEnter}
-                                onDragOver={props.onDragOver}
-                                onDragLeave={props.onDragLeave}
-                                onDragStart={props.onDragStart}
-                                onDragEnd={props.onDragEnd}
-                                onDrop={props.onDrop}
-                            />
-                        </div>
+                        <Option
+                            key = {o.id}
+                            number={i}
+                            option={o}
+                            item={item}
+                            correct={item.correct === o.id}
+                            partnerData={props.partnerData}
+                            editing={props.editing && editingThis}
+                            thisPanel={props.thisPanel}
+                            group={item.text}
+                            onCheckComplete={checkComplete}
+                            onStartEdit={startEdit}
+                            onSetCorrect={setCorrect}
+                            onEditOption={editOption}
+                            onRemoveOption={removeOption}
+                            onDragEnter={props.onDragEnter}
+                            onDragOver={props.onDragOver}
+                            onDragLeave={props.onDragLeave}
+                            onDragStart={props.onDragStart}
+                            onDragEnd={props.onDragEnd}
+                            onDrop={props.onDrop}
+                        />
                     )}
                     {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
                     <button

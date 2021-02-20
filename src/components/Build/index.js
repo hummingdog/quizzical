@@ -7,9 +7,9 @@ export default function Build() {
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
-    const [questions, editQuestions] = useState([...staticQuestions]);
-    const [rounds, editRounds] = useState([...staticRounds]);
-    const [quizzes, editQuizzes] = useState([...staticQuizzes]);
+    const [questions, editQuestions] = useState(staticQuestions);
+    const [rounds, editRounds] = useState(staticRounds);
+    const [quizzes, editQuizzes] = useState(staticQuizzes);
     const [panels, editPanels] = useState([
         {
             name: 'questions',
@@ -32,7 +32,7 @@ export default function Build() {
         if (!event.target.classList.contains('item-option')) {
             setDraggedEl({
                 draggingItem: true,
-                item: event.target.dataset.id,
+                item: {id: event.target.dataset.id},
                 number: +event.target.dataset.number,
                 panel: event.target.dataset.panel,
                 length: +event.target.dataset.length
@@ -113,7 +113,6 @@ export default function Build() {
     function addOptionFromPanel() {
         let newItem;
         let target;
-
         switch(draggedElTarget.panel) {
             case 'rounds':
                 target = rounds.filter(round => round.id === draggedElTarget.item)[0]
@@ -130,16 +129,15 @@ export default function Build() {
     }
 
     function moveOptionInSelection(origin, destination) {
-
         let target;
-        target = questions.filter(question => question.id = draggedElTarget.item)[0]
-
+        target = questions.filter(question => question.id === draggedElTarget.item)[0]
         let newQuestions = [...questions];
-        let newQuestion = {...target}
-        const optionToMove = target.selection[origin];
-        newQuestion.selection.splice(origin, 1);
-        newQuestion.selection.splice(destination, 0, optionToMove);
-        newQuestions.splice(target, 1, newQuestion)
+        let newItem = {...target}
+        const optionToMove = newItem.selection[origin];
+        newItem.selection.splice(origin, 1);
+        newItem.selection.splice(destination, 0, optionToMove);
+        let targetPos = newQuestions.indexOf(target)
+        newQuestions.splice(targetPos, 1, newItem)
         editQuestions(newQuestions)
         // if (newItem.correct === destination) newItem.correct = destination - 1;
         // else if (newItem.correct === origin) newItem.correct = destination;
