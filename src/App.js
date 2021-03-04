@@ -3,6 +3,7 @@ import { Redirect, BrowserRouter as Router, Switch, Route } from 'react-router-d
 import Header from './components/Header';
 import Build from './components/Build';
 import './app.css';
+import QuestionsProvider from "./providers/questions/provider";
 
 export default function App() {
     return (
@@ -10,7 +11,9 @@ export default function App() {
             <Header />
             <Switch>
                 <Route path='/build'>
-                    <Build />
+                    <QuestionsProvider>
+                        <Build />
+                    </QuestionsProvider>
                 </Route>
             </Switch>
         </Router>

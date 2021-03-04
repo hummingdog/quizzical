@@ -1,9 +1,20 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Panel from '../Panel';
 import {questions as staticQuestions, rounds as staticRounds, quizzes as staticQuizzes} from '../../static/dataMock';
 import '../../app.css';
+import useQuestions from "../../providers/questions/use";
+import {quotaErrorCallbacks} from "workbox-core/models/quotaErrorCallbacks";
 
 export default function Build() {
+
+    const questionsContext = useQuestions()
+
+    questionsContext.actions.getQuestions
+        .then(res => console.log(res))
+
+    questionsContext.actions.getRounds
+        .then(res => console.log(res))
+
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
