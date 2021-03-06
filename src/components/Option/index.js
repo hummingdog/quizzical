@@ -67,7 +67,7 @@ export default function Option(props) {
             {props.thisPanel === 'questions' && props.editing ?
                 <input
                     className='item-option-input'
-                    value={option.text}
+                    value={option}
                     placeholder='type something!'
                     onChange={handleChange}
                     onBlur={() => props.onEditOption(props.number, option)}
@@ -76,7 +76,7 @@ export default function Option(props) {
                 <button
                     onClick={props.thisPanel === 'questions' ? props.onStartEdit : undefined}
                 >
-                    {option.text}
+                    {option}
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&

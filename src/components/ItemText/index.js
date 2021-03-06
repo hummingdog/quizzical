@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 
 export default function ItemText(props) {
 
-    const [text, editText] = useState(props.item.text);
+    const [text, editText] = useState(props.item.questionText);
 
     useEffect(() => {
-        editText(props.item.text);
-    }, [props.item.text]);
+        editText(props.item.questionText);
+    }, [props.item.questionText]);
 
     const truncateText = (str) => {
         return !props.panelExpanded && str.length > 65 ? str.substring(0,62) + '...' : str;
@@ -33,7 +33,7 @@ export default function ItemText(props) {
                     className='item-text-box'
                     onClick={props.panelExpanded && props.expanded ? props.onStartEdit : props.onToggleItem}
                 >
-                    {truncateText(text)}
+                    {text && truncateText(text)}
                     <div className='selection-length'>
                         {props.item.selection.length}
                     </div>

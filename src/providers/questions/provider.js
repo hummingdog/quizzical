@@ -15,6 +15,19 @@ const getQuestionsQuery = gql`
         }
     }`
 
+export const editQuestionQuery = gql`
+    mutation editQuestion($id: String!, $input: Question!) {
+        editQuestion(
+            id: $id,
+            input: $input
+        ) {
+            id,
+            questionText,
+            selection
+        }
+    }
+`
+
 const getRoundsQuery = gql`
     query getRounds {
         rounds {

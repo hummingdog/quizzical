@@ -3,11 +3,14 @@ import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
+import { editQuestionQuery } from "../../providers/questions/provider";
+import {useMutation} from "@apollo/client";
 
 export default function Panel(props) {
 
     const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
+    const editQuestion = useMutation(editQuestionQuery)
 
     useEffect(() => {
         editData(props.data);
@@ -40,6 +43,7 @@ export default function Panel(props) {
     }
 
     function saveItem(newItem) {
+        console.log(newItem)
         let newData = [...data];
         let index = newData.findIndex(item => item.id === newItem.id);
         newData[index] = newItem;
