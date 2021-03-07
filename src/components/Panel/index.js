@@ -3,7 +3,7 @@ import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
-import { editQuestionQuery } from "../../providers/questions/provider";
+import { editQuestionQuery } from "../../utils/queries";
 import {useMutation} from "@apollo/client";
 
 export default function Panel(props) {
@@ -43,16 +43,15 @@ export default function Panel(props) {
     }
 
     function saveItem(newItem) {
-        console.log(newItem)
         let newData = [...data];
         let index = newData.findIndex(item => item.id === newItem.id);
         newData[index] = newItem;
         editData([...newData]);
-        savePanel(newData);
+        savePanel(newItem.id, newItem);
     }
 
-    function savePanel(newData) {
-        props.onSaveData([...newData]);
+    function savePanel(id, newData) {
+        props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
     }
 
     function doCollapseAll() {

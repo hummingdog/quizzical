@@ -27,8 +27,8 @@ export default function Item(props) {
 
     function checkComplete(length = 1) {
         let c = true;
-        if (length === 0 || item.text.length === 0 || item.selection.length < 2) c = false;
-        item.selection.forEach(option => { if (option.text.length === 0) c = false; });
+        if (length === 0 || item.title.length === 0 || item.selection.length < 2) c = false;
+        item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
     }
@@ -55,7 +55,7 @@ export default function Item(props) {
 
     function editItemText(value) {
         let newItem = {...item};
-        newItem.text = value;
+        newItem.title = value;
         editItem(newItem);
     }
 
@@ -86,9 +86,12 @@ export default function Item(props) {
     }
 
     function editOption(i, option) {
-        let newItem = {...item};
-        newItem.selection[i].text = option;
+        let newSelection = [ ...item.selection ]
+        newSelection[i] = option
+        let newItem = {...item, selection: newSelection}
         editItem(newItem);
+        console.log(newItem)
+        props.onSaveItem(newItem);
     }
 
     function removeOption(i) {

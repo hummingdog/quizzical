@@ -2,10 +2,14 @@ import React, {useState, useEffect} from 'react';
 import Panel from '../Panel';
 import {questions as staticQuestions, rounds as staticRounds, quizzes as staticQuizzes} from '../../static/dataMock';
 import '../../app.css';
-import useQuestions from "../../providers/questions/use";
-import {quotaErrorCallbacks} from "workbox-core/models/quotaErrorCallbacks";
-import {useQuery} from "@apollo/client";
-import {getQuestionsQuery} from "../../utils/queries";
+import {useMutation, useQuery} from "@apollo/client";
+import {
+    editQuestionQuery, editQuizQuery,
+    editRoundQuery,
+    getQuestionsQuery,
+    getQuizzesQuery,
+    getRoundsQuery
+} from "../../utils/queries";
 
 export default function Build() {
 
@@ -17,15 +21,24 @@ export default function Build() {
     // questionsContext.actions.getRounds
     //     .then(res => console.log(res))
 
-    const questions = useQuery(getQuestionsQuery)
-    // console.log(questions.data)
+    const questionsQuery = useQuery(getQuestionsQuery)
+    const questions = questionsQuery.data && questionsQuery.data.questions
+    const [editQuestion] = useMutation(editQuestionQuery)
 
+    const roundsQuery = useQuery(getRoundsQuery)
+    const rounds = roundsQuery.data && roundsQuery.data.rounds
+    const [editRound] = useMutation(editRoundQuery)
+
+    const quizzesQuery = useQuery(getQuizzesQuery)
+    const quizzes = quizzesQuery.data && quizzesQuery.data.quizzes
+    const [editQuiz] = useMutation(editQuizQuery)
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
     // const [questions, editQuestions] = useState(staticQuestions);
-    const [rounds, editRounds] = useState(staticRounds);
-    const [quizzes, editQuizzes] = useState(staticQuizzes);
+    // const [rounds, editRounds] = useState(staticRounds);
+    // const [quizzes, editQuizzes] = useState(staticQuizzes);
+    const [currentPanel, setCurrentPanel] = useState(0)
     const [panels, editPanels] = useState([
         {
             name: 'questions',
@@ -137,7 +150,7 @@ export default function Build() {
                 newRound.selection.push(draggedEl.item)
                 let newRounds = [...rounds]
                 newRounds.splice(targetPos, 1, newRound)
-                editRounds(newRounds)
+                // editRounds(newRounds)
         }
         // let newItem = {...item};
         // newItem.selection.push(draggedEl.item);
@@ -162,26 +175,27 @@ export default function Build() {
 
     function switchPanel(i) {
         if (!editing) {
-            let changeExpanded = [...panels];
-            changeExpanded.forEach((panel, j) => panel.expanded = i === j);
-            editPanels(changeExpanded);
+            // let changeExpanded = [...panels];
+            // changeExpanded.forEach((panel, j) => panel.expanded = i === j);
+            // editPanels(changeExpanded);
+            setCurrentPanel(i)
         }
     }
 
     return (
         <main>
-            {questions.data &&
+            {questions &&
                 <Panel
                     // key={'panel' + i}
-                    data={questions.data.questions}
+                    data={questions}
                     partnerData={[]}
-                    expanded={true}
+                    expanded={currentPanel === 0}
                     editing={editing}
                     editingId={editingId}
                     panelNumber={0}
                     thisPanel='questions'
                     panelTitle='Questions'
-                    onSaveData={false}
+                    onSaveData={editQuestion}
                     onSwitchEditing={switchEditing}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(0)}
@@ -193,48 +207,52 @@ export default function Build() {
                     onDrop={drop}
                 />
             }
-            <Panel
-                // key={'panel' + i}
-                data={rounds}
-                partnerData={questions.data ?? []}
-                expanded={false}
-                editing={editing}
-                editingId={editingId}
-                panelNumber={1}
-                thisPanel='rounds'
-                panelTitle='Rounds'
-                onSaveData={editRounds}
-                onSwitchEditing={switchEditing}
-                onSwitchEditingId={switchEditingId}
-                onSwitchPanel={() => switchPanel(1)}
-                onDragEnter={enterDrag}
-                onDragOver={overDrag}
-                onDragLeave={exitDrag}
-                onDragStart={startDrag}
-                onDragEnd={endDrag}
-                onDrop={drop}
-            />
-            <Panel
-                // key={'panel' + i}
-                data={quizzes}
-                partnerData={rounds}
-                expanded={false}
-                editing={editing}
-                editingId={editingId}
-                panelNumber={2}
-                thisPanel='quizzes'
-                panelTitle='Quizzes'
-                onSaveData={editQuizzes}
-                onSwitchEditing={switchEditing}
-                onSwitchEditingId={switchEditingId}
-                onSwitchPanel={() => switchPanel(2)}
-                onDragEnter={enterDrag}
-                onDragOver={overDrag}
-                onDragLeave={exitDrag}
-                onDragStart={startDrag}
-                onDragEnd={endDrag}
-                onDrop={drop}
-            />
+            {rounds && questions &&
+                <Panel
+                    // key={'panel' + i}
+                    data={rounds}
+                    partnerData={questions ?? []}
+                    expanded={currentPanel === 1}
+                    editing={editing}
+                    editingId={editingId}
+                    panelNumber={1}
+                    thisPanel='rounds'
+                    panelTitle='Rounds'
+                    onSaveData={editRound}
+                    onSwitchEditing={switchEditing}
+                    onSwitchEditingId={switchEditingId}
+                    onSwitchPanel={() => switchPanel(1)}
+                    onDragEnter={enterDrag}
+                    onDragOver={overDrag}
+                    onDragLeave={exitDrag}
+                    onDragStart={startDrag}
+                    onDragEnd={endDrag}
+                    onDrop={drop}
+                />
+            }
+            {quizzes && rounds &&
+                <Panel
+                    // key={'panel' + i}
+                    data={quizzes}
+                    partnerData={rounds}
+                    expanded={currentPanel === 2}
+                    editing={editing}
+                    editingId={editingId}
+                    panelNumber={2}
+                    thisPanel='quizzes'
+                    panelTitle='Quizzes'
+                    onSaveData={editQuiz}
+                    onSwitchEditing={switchEditing}
+                    onSwitchEditingId={switchEditingId}
+                    onSwitchPanel={() => switchPanel(2)}
+                    onDragEnter={enterDrag}
+                    onDragOver={overDrag}
+                    onDragLeave={exitDrag}
+                    onDragStart={startDrag}
+                    onDragEnd={endDrag}
+                    onDrop={drop}
+                />
+            }
         </main>
     );
 }
