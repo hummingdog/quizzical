@@ -1,16 +1,15 @@
 import React, {useState, useEffect} from 'react';
+import {useMutation} from '@apollo/client';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
-import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
-import { editQuestionQuery } from "../../utils/queries";
-import {useMutation} from "@apollo/client";
+import {editQuestionQuery} from '../../utils/queries';
 
 export default function Panel(props) {
 
     const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
-    const editQuestion = useMutation(editQuestionQuery)
+    const editQuestion = useMutation(editQuestionQuery);
 
     useEffect(() => {
         editData(props.data);
