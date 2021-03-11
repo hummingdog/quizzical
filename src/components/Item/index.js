@@ -24,9 +24,10 @@ export default function Item(props) {
         if (props.collapseAll) toggleExpanded(false);
     }, [props.collapseAll]);
 
-    function checkComplete(length = 1) {
+    function checkComplete() {
         let c = true;
-        if (length === 0 || item.title.length === 0 || item.selection.length < 2) c = false;
+        if (!item.title || item.title.length === 0 || !item.selection || item.selection.length < 2) c = false;
+        // if (item.title.length === 0 || item.selection.length < 2) c = false;
         item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
@@ -89,8 +90,7 @@ export default function Item(props) {
         newSelection[i] = option
         let newItem = {...item, selection: newSelection}
         editItem(newItem);
-        console.log(newItem)
-        props.onSaveItem(newItem);
+        saveItem()
     }
 
     function removeOption(i) {
@@ -103,7 +103,8 @@ export default function Item(props) {
     function setCorrect(i) {
         let newItem = {...item};
         newItem.correctAnswer = +i;
-        editItem({...newItem});
+        editItem(newItem);
+        saveItem()
     }
 
     return (

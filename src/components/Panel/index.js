@@ -3,13 +3,11 @@ import {useMutation} from '@apollo/client';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import './panel.css';
-import {editQuestionQuery} from '../../utils/queries';
 
 export default function Panel(props) {
 
     const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
-    const editQuestion = useMutation(editQuestionQuery);
 
     useEffect(() => {
         editData(props.data);
@@ -17,15 +15,14 @@ export default function Panel(props) {
 
     function addItem() {
         let newData = {
-            id: 0,
             category: 'Misc',
-            private: true,
-            text: '',
+            public: false,
+            title: '',
             selection: []
         };
         if (props.thisPanel === 'questions') {
             newData.selection = ['', ''];
-            newData.correct = 0;
+            newData.correctAnswer = 0;
         }
         editData(oldData => [newData, ...oldData]);
         props.onSwitchPanel();
@@ -38,7 +35,6 @@ export default function Panel(props) {
         let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
-        savePanel(newData);
     }
 
     function saveItem(newItem) {
@@ -46,12 +42,18 @@ export default function Panel(props) {
         let index = newData.findIndex(item => item.id === newItem.id);
         newData[index] = newItem;
         editData([...newData]);
-        savePanel(newItem.id, newItem);
+        // savePanel(newItem.id, newItem);
+        if (!newItem.id) {
+            props.onAddItem({ variables: { input: newItem} })
+        } else {
+            props.onSaveData({ variables: { id: newItem.id, input: newItem} })
+        }
+        // props.onSaveData({ variables: { id: newItem.id, input: { title: newItem.title, selection: newItem.selection }}});
     }
 
-    function savePanel(id, newData) {
-        props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
-    }
+    // function savePanel(id, newData) {
+    //     props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
+    // }
 
     function doCollapseAll() {
         toggleCollapseAll(true);

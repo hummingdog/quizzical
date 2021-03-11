@@ -10,20 +10,35 @@ import {
     getQuizzesQuery,
     getRoundsQuery
 } from '../../utils/queries';
+import useData from "../../providers/data/use";
 
 export default function Build() {
 
-    const questionsQuery = useQuery(getQuestionsQuery);
-    const questions = questionsQuery.data && questionsQuery.data.questions;
-    const [editQuestion] = useMutation(editQuestionQuery);
+    // const getQuestions = useQuery(getQuestionsQuery);
+    // const questions = getQuestions.data && getQuestions.data.questions;
+    // const [editQuestion] = useMutation(editQuestionQuery);
+    //
+    // const getRounds = useQuery(getRoundsQuery);
+    // const rounds = getRounds.data && getRounds.data.rounds;
+    // const [editRound] = useMutation(editRoundQuery);
+    //
+    // const getQuizzes = useQuery(getQuizzesQuery);
+    // const quizzes = getQuizzes.data && getQuizzes.data.quizzes;
+    // const [editQuiz] = useMutation(editQuizQuery);
 
-    const roundsQuery = useQuery(getRoundsQuery);
-    const rounds = roundsQuery.data && roundsQuery.data.rounds;
-    const [editRound] = useMutation(editRoundQuery);
-
-    const quizzesQuery = useQuery(getQuizzesQuery);
-    const quizzes = quizzesQuery.data && quizzesQuery.data.quizzes;
-    const [editQuiz] = useMutation(editQuizQuery);
+    const {
+        state: {
+            questions,
+            rounds,
+            quizzes
+        },
+        actions: {
+            addQuestion,
+            editQuestion,
+            editRound,
+            editQuiz
+        }
+    } = useData()
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
@@ -46,6 +61,7 @@ export default function Build() {
                     thisPanel='questions'
                     panelTitle='Questions'
                     onSaveData={editQuestion}
+                    onAddItem={addQuestion}
                     onSwitchEditing={switchEditing}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(0)}
