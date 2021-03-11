@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import ItemHeader from '../ItemHeader';
 import ItemText from '../ItemText';
 import Option from '../Option';
 import DragHandle from '../DragHandle';
 import {categories} from '../../static/categories';
 import './item.css';
-import '../../static/colorBlocks.css';
+import '../../static/color-blocks.css';
 
 export default function Item(props) {
 
@@ -15,7 +15,6 @@ export default function Item(props) {
     const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
-    // const targetEl = useRef(null)
 
     useEffect(() => {
         editItem(props.item);
@@ -103,7 +102,7 @@ export default function Item(props) {
 
     function setCorrect(i) {
         let newItem = {...item};
-        newItem.correct = +i;
+        newItem.correctAnswer = +i;
         editItem({...newItem});
     }
 
@@ -121,7 +120,6 @@ export default function Item(props) {
             onDragStart={props.onDragStart}
             onDragEnd={props.onDragEnd}
             onDrop={props.onDrop}
-            // ref={targetEl}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -149,7 +147,7 @@ export default function Item(props) {
                 expanded={expanded}
                 editing={props.editing && editingThis}
                 panelExpanded={props.panelExpanded}
-                onToggleItem={toggleExpanded}
+                onToggleItem={() => toggleExpanded(!expanded)}
                 onCheckComplete={checkComplete}
                 onStartEdit={startEdit}
                 onEditItemText={editItemText}
@@ -158,11 +156,11 @@ export default function Item(props) {
                 <div className='item-options'>
                     {item.selection.map((o, i) =>
                         <Option
-                            key = {o.id}
+                            key={o + i}
                             number={i}
                             option={o}
                             item={item}
-                            correct={item.correct === o.id}
+                            correct={item.correctAnswer === i}
                             partnerData={props.partnerData}
                             editing={props.editing && editingThis}
                             thisPanel={props.thisPanel}

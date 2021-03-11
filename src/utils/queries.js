@@ -7,6 +7,8 @@ export const getQuestionsQuery = gql`
             id
             title
             selection
+            correctAnswer
+            category
         }
     }`
 
@@ -20,6 +22,8 @@ export const addQuestionQuery = gql `
         id
         title
         selection
+        correctAnswer
+        category
     }
 `
 
@@ -32,6 +36,8 @@ export const editQuestionQuery = gql`
             id
             title
             selection
+            correctAnswer
+            category
         }
     }
 `

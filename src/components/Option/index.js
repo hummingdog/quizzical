@@ -13,11 +13,9 @@ export default function Option(props) {
     }, [props.option, props.partnerData]);
 
     function getOption() {
-        if (props.partnerData.find(o => o.id === props.option.id)) {
-            let value = props.partnerData.find(o => o.id === props.option.id);
-            editOption(value);
-        } else {
-            props.onRemoveOption(props.number);
+        if (props.partnerData.find(o => o.id === props.option)) {
+            let value = props.partnerData.find(o => o.id === props.option);
+            editOption(value.title);
         }
     }
 
@@ -82,7 +80,7 @@ export default function Option(props) {
             {props.thisPanel === 'questions' && props.editing &&
                 <button
                     aria-roledescription='radio button'
-                    className={'correct-option' + (props.number === props.correct ? ' selected-button' : '')}
+                    className={'correct-option' + (props.correct ? ' selected-button' : '')}
                     onClick={() => props.onSetCorrect(props.number)}
                 >
                 </button>
