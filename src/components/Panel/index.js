@@ -1,19 +1,24 @@
 import React, {useState, useEffect} from 'react';
-import {v4 as uuidv4} from 'uuid';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
-import {draggedItem, draggedItemTarget} from '../Item';
+import {draggedEl, draggedElTarget} from '../Item';
 import './panel.css';
+import { editQuestionQuery } from "../../utils/queries";
+import {useMutation} from "@apollo/client";
 
 export default function Panel(props) {
 
-    const [data, editData] = useState([...props.data]);
+    const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
+    const editQuestion = useMutation(editQuestionQuery)
+
+    useEffect(() => {
+        editData(props.data);
+    }, [props.reset, props.data]);
 
     function addItem() {
         let newData = {
-            id: uuidv4(),
-            newItem: true,
+            id: 0,
             category: 'Misc',
             private: true,
             text: '',
@@ -29,64 +34,24 @@ export default function Panel(props) {
         props.onSwitchEditingId(newData.id);
     }
 
-    function deleteItem(event) {
+    function deleteItem(itemId) {
         let newData = [...data];
-        let index = newData.findIndex(item => item.id === event.target.dataset.id);
+        let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
-        save();
-        //
-        // DB MUTATION FOR ITEM/DOC
+        savePanel(newData);
     }
 
-    function editItemText(itemId, text) {
+    function saveItem(newItem) {
         let newData = [...data];
-        newData.find(item => item.id === itemId).text = text;
+        let index = newData.findIndex(item => item.id === newItem.id);
+        newData[index] = newItem;
         editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
+        savePanel(newItem.id, newItem);
     }
 
-    function addOptionFromPanel() {
-        let newData = [...data];
-        newData.find(item => item.id === draggedItemTarget.item).selection.push(draggedItem.item);
-        editData([...newData]);
-        //
-        // DB MUTATION FOR DRAG TARGET ITEM/DOC
-    }
-
-    function editOption(itemId, i, text) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).selection[i] = text;
-        editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function removeOptionFromItem(itemId, value) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).selection.splice(value, 1);
-        editData([...newData]);
-        if (props.thisPanel === 'questions') setSelected(itemId, 0);
-        save();
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function setSelected(itemId, i) {
-        let newData = [...data];
-        newData.find(item => item.id === itemId).correct = i;
-        editData([...newData]);
-        //
-        // DB MUTATION FOR ITEM/DOC
-    }
-
-    function save() {
-        //
-        // DB MUTATION FOR ANY NEW ITEM (any item with no id? or with property newItem: true?)
-        // UPDATE STATE WITH RETURNED OBJECT_ID
-        //
-        props.onSaveData([...data]);
+    function savePanel(id, newData) {
+        props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
     }
 
     function doCollapseAll() {
@@ -107,7 +72,7 @@ export default function Panel(props) {
                     <button
                         title='collapse all'
                         className='collapse-all'
-                        onClick={doCollapseAll}
+                        onClick={!props.editing ? doCollapseAll : undefined}
                     >
                         &#9650;
                     </button>
@@ -123,10 +88,10 @@ export default function Panel(props) {
             <div
                 className='panel-content'
             >
-                {data.map(type =>
+                {data.map((item, i) =>
                     <Item
-                        key={'item' + type.id}
-                        type={type}
+                        key={'item: ' + item.id}
+                        item={item}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}
                         thisPanel={props.thisPanel}
@@ -137,13 +102,16 @@ export default function Panel(props) {
                         onSwitchEditing={props.onSwitchEditing}
                         onSwitchEditingId={props.onSwitchEditingId}
                         onSwitchPanel={props.onSwitchPanel}
-                        onEditItemText={editItemText}
+                        // onEditItemText={editItemText}
+                        // onUpdateItem={updateItem}
                         onDeleteItem={deleteItem}
-                        onSaveItem={save}
-                        onAddOptionFromPanel={addOptionFromPanel}
-                        onRemoveOptionFromItem={removeOptionFromItem}
-                        onEditOption={editOption}
-                        onSetSelected={setSelected}
+                        onSaveItem={saveItem}
+                        onDragEnter={props.onDragEnter}
+                        onDragOver={props.onDragOver}
+                        onDragLeave={props.onDragLeave}
+                        onDragStart={props.onDragStart}
+                        onDragEnd={props.onDragEnd}
+                        onDrop={props.onDrop}
                     />
                 )}
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import CategorySelect from '../CategorySelect';
+import './item-header.css';
 
 export default function ItemHeader(props) {
     return (
@@ -12,30 +13,40 @@ export default function ItemHeader(props) {
                     &#9660;
                 </button>
                 <CategorySelect
-                    category={props.type.category}
+                    category={props.item.category}
                     thisPanel={props.thisPanel}
-                    isItem={props.type.text}
+                    isItem={props.item.text}
                 />
                 <select className='item-privacy'>
                     <option>
                         private
                     </option>
                 </select>
-                <button
-                    className='delete'
-                    data-id={props.type.id}
-                    onClick={props.onDeleteItem}
-                >
-                    delete
-                </button>
+                {props.item.id !== 0 &&
+                    <button
+                        className='delete'
+                        data-id={props.item.id}
+                        onClick={() => props.onDeleteItem(props.item.id)}
+                    >
+                        delete
+                    </button>
+                }
             </div>
             {props.editingThis ?
-                <button
-                    className='edit-item'
-                    onClick={props.onSave}
-                >
-                    save
-                </button>
+                <div>
+                    <button
+                        className='edit-item'
+                        onClick={props.onCancel}
+                    >
+                        cancel
+                    </button>
+                    <button
+                        className='edit-item'
+                        onClick={props.onSaveItem}
+                    >
+                        save
+                    </button>
+                </div>
                 :
                 <button
                     className='edit-item'

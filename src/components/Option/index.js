@@ -1,82 +1,99 @@
 import React, {useState, useEffect} from 'react';
+import DragHandle from '../DragHandle';
 import './option.css';
+import {Trash} from 'react-feather';
 
 export default function Option(props) {
 
-    const [selection, editSelection] = useState(props.selection);
-    const [selected, editSelected] = useState(props.selected);
+    const [option, editOption] = useState(props.option);
+    const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
-        if (props.thisPanel !== 'questions') getSelection();
-    }, [props.selection, props.partnerData]);
+        if (props.thisPanel !== 'questions') getOption();
+    }, [props.option, props.partnerData]);
 
-    useEffect(() => {
-        editSelected(props.selected);
-    }, [props.selected]);
-
-    function getSelection() {
-        if (props.partnerData.find(o => o.id === props.selection)) {
-            let value = props.partnerData.find(o => o.id === props.selection).text;
-            editSelection([...value]);
+    function getOption() {
+        if (props.partnerData.find(o => o.id === props.option.id)) {
+            let value = props.partnerData.find(o => o.id === props.option.id);
+            editOption(value);
         } else {
-            props.onRemoveOptionFromItem(props.type.id, props.number);
+            props.onRemoveOption(props.number);
         }
     }
 
     function handleChange(event) {
-        editSelection(event.target.value);
+        editOption(event.target.value);
         props.onCheckComplete(event.target.value.length);
     }
 
-    function handleSelectedChange() {
-        props.onSetSelected(props.type.id, props.number);
+    function handleRemove() {
+        if (props.thisPanel === 'questions') {
+            if (props.item.selection.length > 2) props.onRemoveOption(props.number);
+        } else {
+            props.onRemoveOption(props.number);
+        }
     }
 
     return (
-        <label
-            className='item-option'
+        <div
+            className={'item-option' + (props.editing ? ' editing' : '') + (props.correct ? ' selected-option' : '')}
+            data-name={'option'}
+            data-id={props.item.id}
+            data-option={props.number}
+            draggable={true}
+            onDragEnter={props.onDragEnter}
+            onDragOver={props.onDragOver}
+            onDragLeave={props.onDragLeave}
+            onDragStart={props.onDragStart}
+            onDragEnd={props.onDragEnd}
             onClick={event => event.preventDefault()}>
             {props.editing ?
                 <button
-                    title='remove'
+                    title='remove option'
                     value={props.number}
                     data-panel={props.thisPanel}
-                    data-item={props.type.id}
-                    onClick={() => props.onRemoveOptionFromItem(props.type.id, props.number)}
+                    data-item={props.item.id}
+                    className='remove-option'
+                    onClick={handleRemove}
                 >
-                    -
+                    <Trash
+                        size={14}
+                    />
                 </button>
                 :
-                <div></div>
+                <div>
+                </div>
             }
             {props.thisPanel === 'questions' && props.editing ?
                 <input
                     className='item-option-input'
-                    value={selection}
+                    value={option}
                     placeholder='type something!'
                     onChange={handleChange}
-                    onBlur={() => props.onEditOption(props.type.id, props.number, selection)}
+                    onBlur={() => props.onEditOption(props.number, option)}
                 />
                 :
                 <button
                     onClick={props.thisPanel === 'questions' ? props.onStartEdit : undefined}
                 >
-                    {selection}
+                    {option}
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
-            <div className='correct-option'>
-                <div>
-                </div>
-                <input
-                    type='radio'
-                    name={props.group}
-                    value={props.number}
-                    checked={selected}
-                    onChange={handleSelectedChange}
-                />
-            </div>
+                <button
+                    aria-roledescription='radio button'
+                    className={'correct-option' + (props.number === props.correct ? ' selected-button' : '')}
+                    onClick={() => props.onSetCorrect(props.number)}
+                >
+                </button>
             }
-        </label>
+            {props.editing &&
+                <DragHandle
+                    description={'rearrange'}
+                    dragging={dragging}
+                    onToggleDragging={toggleDragging}
+                />
+            }
+        </div>
     );
 }
