@@ -40,12 +40,15 @@ export default function DataProvider({children}) {
             questions, rounds, quizzes
         },
         actions: {
+            getQuestions,
             addQuestion,
             editQuestion,
             deleteQuestion,
+            getRounds,
             addRound,
             editRound,
             deleteRound,
+            getQuizzes,
             addQuiz,
             editQuiz,
             deleteQuiz

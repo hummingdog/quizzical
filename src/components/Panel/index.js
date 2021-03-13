@@ -1,9 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {useMutation} from '@apollo/client';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import './panel.css';
-import useData from "../../providers/data/use";
 
 export default function Panel(props) {
 
@@ -16,6 +14,7 @@ export default function Panel(props) {
 
     function addItem() {
         let newItem = {
+            id: 0,
             category: 'Misc',
             public: false,
             title: '',
@@ -26,29 +25,20 @@ export default function Panel(props) {
             newItem.correctAnswer = 0;
         }
         editData(data => [newItem, ...data]);
-        props.onSwitchPanel();
+        // props.onSwitchPanel();
         props.onSwitchEditing(true);
         props.onSwitchEditingId(newItem.id);
     }
 
-    function deleteItem(itemId) {
+    function removeItem(itemId) {
         let newData = [...data];
         let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
-
     }
 
-    function saveItem(newItem) {
-        let newData = [...data];
-        let index = newData.findIndex(item => item.id === newItem.id);
-        newData[index] = newItem;
-        editData([...newData]);
-        if (!newItem.id) {
-            props.onAddItem({ variables: { input: newItem} })
-        } else {
-            props.onSaveData({ variables: { id: newItem.id, input: newItem} })
-        }
+    function deleteItem(itemId) {
+        props.onDeleteItem(itemId)
     }
 
     function doCollapseAll() {
@@ -89,6 +79,8 @@ export default function Panel(props) {
                     <Item
                         key={'item: ' + item.id}
                         item={item}
+                        editData={editData}
+                        getData={props.getData}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}
                         thisPanel={props.thisPanel}
@@ -101,8 +93,11 @@ export default function Panel(props) {
                         onSwitchPanel={props.onSwitchPanel}
                         // onEditItemText={editItemText}
                         // onUpdateItem={updateItem}
+                        onAddItem={props.onAddItem}
+                        onEditItem={props.onEditItem}
+                        onRemoveItem={removeItem}
                         onDeleteItem={deleteItem}
-                        onSaveItem={saveItem}
+                        // onSaveItem={saveItem}
                     />
                 )}
             </div>

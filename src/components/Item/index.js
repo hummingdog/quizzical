@@ -12,7 +12,7 @@ export default function Item(props) {
     const [item, editItem] = useState(props.item);
     const [backupItem, editBackupItem] = useState(props.item);
     const [expanded, toggleExpanded] = useState(props.item.id === props.editingId);
-    const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
+    const [editingThis, toggleEditingThis] = useState(props.editing);
     const [itemComplete, toggleItemComplete] = useState(true);
     const [dragging, toggleDragging] = useState('supported');
 
@@ -24,9 +24,54 @@ export default function Item(props) {
         if (props.collapseAll) toggleExpanded(false);
     }, [props.collapseAll]);
 
+    // function add(item) {
+    //     switch (props.panelNumber) {
+    //         case 0:
+    //             addQuestion(item)
+    //             break
+    //         case 1:
+    //             addRound(item)
+    //             break
+    //         case 2:
+    //             addQuiz(item)
+    //             break
+    //     }
+    // }
+    //
+    // function edit(item) {
+    //     switch (props.panelNumber) {
+    //         case 0:
+    //             editQuestion(item)
+    //             break
+    //         case 1:
+    //             editRound(item)
+    //             break
+    //         case 2:
+    //             editQuiz(item)
+    //             break
+    //     }
+    // }
+
+    // function deleteItem(itemId) {
+    //     props.onDeleteItem(itemId)
+    // }
+
+    // function saveItem(newItem) {
+    //     // let newData = [...data];
+    //     // let index = newData.findIndex(item => item.id === newItem.id);
+    //     // newData[index] = newItem;
+    //     // editData([...newData]);
+    //     if (!newItem.id) {
+    //         props.onAddItem({ variables: { input: newItem} })
+    //     } else {
+    //         props.onEditItem({ variables: { id: newItem.id, input: newItem} })
+    //     }
+    // }
+
     function checkComplete() {
         let c = true;
-        if (!item.title || item.title.length === 0 || !item.selection || item.selection.length < 2) c = false;
+        if (!item.title || item.title.length === 0) c = false;
+        if (props.thisPanel === 0 && (!item.selection || item.selection.length < 2)) c = false;
         // if (item.title.length === 0 || item.selection.length < 2) c = false;
         item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
@@ -62,16 +107,26 @@ export default function Item(props) {
     function saveItem() {
         checkComplete();
         if (itemComplete) {
-            props.onSaveItem(item);
+            // props.onSaveItem(item);
+            if (item.id === 0) {
+                props.onAddItem({ variables: { input: item} })
+            } else {
+                props.onEditItem({ variables: { id: item.id, input: item} })
+            }
             editBackupItem(item);
             toggleEditingThis(false);
             props.onSwitchEditing(false);
         }
     }
 
-    function cancelItem() {
+    function deleteItem(itemId) {
+        props.onDeleteItem({ variables: { id: itemId } })
+        props.getData.refetch()
+    }
+
+    function cancelEdit() {
         if (item.id === 0) {
-            props.onDeleteItem(props.item.id);
+            props.onRemoveItem(props.item.id);
         } else {
             editItem(backupItem);
         }
@@ -137,8 +192,8 @@ export default function Item(props) {
                     onToggleItem={() => toggleExpanded(!expanded)}
                     onStartEdit={startEdit}
                     onSaveItem={saveItem}
-                    onCancel={cancelItem}
-                    onDeleteItem={props.onDeleteItem}
+                    onCancel={cancelEdit}
+                    onDeleteItem={deleteItem}
                 />
             }
             <ItemText
