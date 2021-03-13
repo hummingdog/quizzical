@@ -35,8 +35,13 @@ export default function Build() {
         actions: {
             addQuestion,
             editQuestion,
+            deleteQuestion,
+            addRound,
             editRound,
-            editQuiz
+            deleteRound,
+            addQuiz,
+            editQuiz,
+            deleteQuiz
         }
     } = useData()
 

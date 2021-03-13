@@ -81,7 +81,7 @@ export default function Item(props) {
 
     function addOption() {
         let newItem = {...item};
-        newItem.selection.push({});
+        newItem.selection.push('');
         editItem(newItem);
     }
 
@@ -90,7 +90,6 @@ export default function Item(props) {
         newSelection[i] = option
         let newItem = {...item, selection: newSelection}
         editItem(newItem);
-        saveItem()
     }
 
     function removeOption(i) {
@@ -104,7 +103,6 @@ export default function Item(props) {
         let newItem = {...item};
         newItem.correctAnswer = +i;
         editItem(newItem);
-        saveItem()
     }
 
     return (

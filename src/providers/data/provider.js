@@ -1,36 +1,54 @@
 import React from 'react'
 import DataContext from "./context";
 import {
+    getQuestionsQuery,
     addQuestionQuery,
     editQuestionQuery,
-    editQuizQuery,
+    deleteQuestionQuery,
+    getRoundsQuery,
+    addRoundQuery,
     editRoundQuery,
-    getQuestionsQuery,
+    deleteRoundQuery,
     getQuizzesQuery,
-    getRoundsQuery
+    addQuizQuery,
+    editQuizQuery,
+    deleteQuizQuery
 } from '../../utils/queries';
 import {useMutation, useQuery} from "@apollo/client";
 
 export default function DataProvider({children}) {
     const getQuestions = useQuery(getQuestionsQuery);
     const questions = getQuestions.data && getQuestions.data.questions;
-    const [editQuestion] = useMutation(editQuestionQuery);
     const [addQuestion] = useMutation(addQuestionQuery);
+    const [editQuestion] = useMutation(editQuestionQuery);
+    const [deleteQuestion] = useMutation(deleteQuestionQuery);
 
     const getRounds = useQuery(getRoundsQuery);
     const rounds = getRounds.data && getRounds.data.rounds;
+    const [addRound] = useMutation(addRoundQuery);
     const [editRound] = useMutation(editRoundQuery);
+    const [deleteRound] = useMutation(deleteRoundQuery);
 
     const getQuizzes = useQuery(getQuizzesQuery);
     const quizzes = getQuizzes.data && getQuizzes.data.quizzes;
-    const [editQuiz] = useMutation(editQuizQuery);
+    const [addQuiz] = useMutation(addQuestionQuery);
+    const [editQuiz] = useMutation(editQuestionQuery);
+    const [deleteQuiz] = useMutation(deleteQuestionQuery);
 
     const value = {
         state: {
             questions, rounds, quizzes
         },
         actions: {
-            addQuestion, editQuestion, editRound, editQuiz
+            addQuestion,
+            editQuestion,
+            deleteQuestion,
+            addRound,
+            editRound,
+            deleteRound,
+            addQuiz,
+            editQuiz,
+            deleteQuiz
         }
     }
 

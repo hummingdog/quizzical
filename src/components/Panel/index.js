@@ -3,6 +3,7 @@ import {useMutation} from '@apollo/client';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import './panel.css';
+import useData from "../../providers/data/use";
 
 export default function Panel(props) {
 
@@ -14,20 +15,20 @@ export default function Panel(props) {
     }, [props.reset, props.data]);
 
     function addItem() {
-        let newData = {
+        let newItem = {
             category: 'Misc',
             public: false,
             title: '',
             selection: []
         };
         if (props.thisPanel === 'questions') {
-            newData.selection = ['', ''];
-            newData.correctAnswer = 0;
+            newItem.selection = ['', ''];
+            newItem.correctAnswer = 0;
         }
-        editData(oldData => [newData, ...oldData]);
+        editData(data => [newItem, ...data]);
         props.onSwitchPanel();
         props.onSwitchEditing(true);
-        props.onSwitchEditingId(newData.id);
+        props.onSwitchEditingId(newItem.id);
     }
 
     function deleteItem(itemId) {
@@ -35,6 +36,7 @@ export default function Panel(props) {
         let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
+
     }
 
     function saveItem(newItem) {
@@ -42,18 +44,12 @@ export default function Panel(props) {
         let index = newData.findIndex(item => item.id === newItem.id);
         newData[index] = newItem;
         editData([...newData]);
-        // savePanel(newItem.id, newItem);
         if (!newItem.id) {
             props.onAddItem({ variables: { input: newItem} })
         } else {
             props.onSaveData({ variables: { id: newItem.id, input: newItem} })
         }
-        // props.onSaveData({ variables: { id: newItem.id, input: { title: newItem.title, selection: newItem.selection }}});
     }
-
-    // function savePanel(id, newData) {
-    //     props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
-    // }
 
     function doCollapseAll() {
         toggleCollapseAll(true);
@@ -107,12 +103,6 @@ export default function Panel(props) {
                         // onUpdateItem={updateItem}
                         onDeleteItem={deleteItem}
                         onSaveItem={saveItem}
-                        onDragEnter={props.onDragEnter}
-                        onDragOver={props.onDragOver}
-                        onDragLeave={props.onDragLeave}
-                        onDragStart={props.onDragStart}
-                        onDragEnd={props.onDragEnd}
-                        onDrop={props.onDrop}
                     />
                 )}
             </div>
