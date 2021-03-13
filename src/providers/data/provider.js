@@ -31,9 +31,9 @@ export default function DataProvider({children}) {
 
     const getQuizzes = useQuery(getQuizzesQuery);
     const quizzes = getQuizzes.data && getQuizzes.data.quizzes;
-    const [addQuiz] = useMutation(addQuestionQuery);
-    const [editQuiz] = useMutation(editQuestionQuery);
-    const [deleteQuiz] = useMutation(deleteQuestionQuery);
+    const [addQuiz] = useMutation(addQuizQuery);
+    const [editQuiz] = useMutation(editQuizQuery);
+    const [deleteQuiz] = useMutation(deleteQuizQuery);
 
     const value = {
         state: {

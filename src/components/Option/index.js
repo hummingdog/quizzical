@@ -38,12 +38,6 @@ export default function Option(props) {
             data-name={'option'}
             data-id={props.item.id}
             data-option={props.number}
-            draggable={true}
-            onDragEnter={props.onDragEnter}
-            onDragOver={props.onDragOver}
-            onDragLeave={props.onDragLeave}
-            onDragStart={props.onDragStart}
-            onDragEnd={props.onDragEnd}
             onClick={event => event.preventDefault()}>
             {props.editing ?
                 <button
@@ -85,13 +79,13 @@ export default function Option(props) {
                 >
                 </button>
             }
-            {props.editing &&
-                <DragHandle
-                    description={'rearrange'}
-                    dragging={dragging}
-                    onToggleDragging={toggleDragging}
-                />
-            }
+            {/*{props.editing &&*/}
+            {/*    <DragHandle*/}
+            {/*        description={'rearrange'}*/}
+            {/*        dragging={dragging}*/}
+            {/*        onToggleDragging={toggleDragging}*/}
+            {/*    />*/}
+            {/*}*/}
         </div>
     );
 }
