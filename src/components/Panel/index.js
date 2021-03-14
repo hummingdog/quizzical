@@ -1,56 +1,44 @@
 import React, {useState, useEffect} from 'react';
-import {useMutation} from '@apollo/client';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import './panel.css';
-import {editQuestionQuery} from '../../utils/queries';
 
 export default function Panel(props) {
 
     const [data, editData] = useState(props.data);
     const [collapseAll, toggleCollapseAll] = useState(false);
-    const editQuestion = useMutation(editQuestionQuery);
 
     useEffect(() => {
         editData(props.data);
     }, [props.reset, props.data]);
 
     function addItem() {
-        let newData = {
+        let newItem = {
             id: 0,
             category: 'Misc',
-            private: true,
-            text: '',
+            public: false,
+            title: '',
             selection: []
         };
         if (props.thisPanel === 'questions') {
-            newData.selection = ['', ''];
-            newData.correct = 0;
+            newItem.selection = ['', ''];
+            newItem.correctAnswer = 0;
         }
-        editData(oldData => [newData, ...oldData]);
-        props.onSwitchPanel();
+        editData(data => [newItem, ...data]);
+        // props.onSwitchPanel();
         props.onSwitchEditing(true);
-        props.onSwitchEditingId(newData.id);
+        props.onSwitchEditingId(newItem.id);
     }
 
-    function deleteItem(itemId) {
+    function removeItem(itemId) {
         let newData = [...data];
         let index = newData.findIndex(item => item.id === itemId);
         newData.splice(index, 1);
         editData([...newData]);
-        savePanel(newData);
     }
 
-    function saveItem(newItem) {
-        let newData = [...data];
-        let index = newData.findIndex(item => item.id === newItem.id);
-        newData[index] = newItem;
-        editData([...newData]);
-        savePanel(newItem.id, newItem);
-    }
-
-    function savePanel(id, newData) {
-        props.onSaveData({ variables: { id: id, input: { title: newData.title, selection: newData.selection }}});
+    function deleteItem(itemId) {
+        props.onDeleteItem(itemId)
     }
 
     function doCollapseAll() {
@@ -91,6 +79,8 @@ export default function Panel(props) {
                     <Item
                         key={'item: ' + item.id}
                         item={item}
+                        editData={editData}
+                        getData={props.getData}
                         partnerData={props.partnerData}
                         panelNumber={props.panelNumber}
                         thisPanel={props.thisPanel}
@@ -103,14 +93,11 @@ export default function Panel(props) {
                         onSwitchPanel={props.onSwitchPanel}
                         // onEditItemText={editItemText}
                         // onUpdateItem={updateItem}
+                        onAddItem={props.onAddItem}
+                        onEditItem={props.onEditItem}
+                        onRemoveItem={removeItem}
                         onDeleteItem={deleteItem}
-                        onSaveItem={saveItem}
-                        onDragEnter={props.onDragEnter}
-                        onDragOver={props.onDragOver}
-                        onDragLeave={props.onDragLeave}
-                        onDragStart={props.onDragStart}
-                        onDragEnd={props.onDragEnd}
-                        onDrop={props.onDrop}
+                        // onSaveItem={saveItem}
                     />
                 )}
             </div>

@@ -12,18 +12,17 @@ export const getQuestionsQuery = gql`
         }
     }`
 
-export const addQuestionQuery = gql `
-    mutation addQuestion($id: ID!, $input: QuestionInput!) {
+export const addQuestionQuery = gql`
+    mutation addQuestion($input: QuestionInput!) {
         addQuestion(
-            id: $id,
             input: $input
-        )
-    } {
-        id
-        title
-        selection
-        correctAnswer
-        category
+        ) {
+            id
+            title
+            selection
+            correctAnswer
+            category
+        }
     }
 `
 
@@ -61,16 +60,15 @@ export const getRoundsQuery = gql`
         }
     }`
 
-export const addRoundQuery = gql `
-    mutation addRound($id: ID!, $input: RoundInput!) {
+export const addRoundQuery = gql`
+    mutation addRound($input: RoundInput!) {
         addRound(
-            id: $id,
             input: $input
-        )
-    } {
-        id
-        title
-        selection
+        ) {
+            id
+            title
+            selection
+        }
     }
 `
 
@@ -106,16 +104,15 @@ export const getQuizzesQuery = gql`
         }
     }`
 
-export const addQuizQuery = gql `
-    mutation addQuiz($id: ID!, $input: QuizInput!) {
+export const addQuizQuery = gql`
+    mutation addQuiz($input: QuizInput!) {
         addQuiz(
-            id: $id,
             input: $input
-        )
-    } {
-        id
-        title
-        selection
+        ) {
+            id
+            title
+            selection
+        }
     }
 `
 

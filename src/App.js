@@ -4,10 +4,13 @@ import Header from './components/Header';
 import Build from './components/Build';
 import './app.css';
 import {ApolloClient, InMemoryCache, ApolloProvider, gql, useQuery} from '@apollo/client';
+import DataProvider from "./providers/data/provider";
 
 const client = new ApolloClient({
     uri: 'http://localhost:4000/graphql',
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+        addTypename: false
+    })
 });
 
 export default function App() {
@@ -17,7 +20,9 @@ export default function App() {
             <Switch>
                 <Route path='/build'>
                     <ApolloProvider client={client}>
-                        <Build />
+                        <DataProvider>
+                            <Build />
+                        </DataProvider>
                     </ApolloProvider>
                 </Route>
             </Switch>

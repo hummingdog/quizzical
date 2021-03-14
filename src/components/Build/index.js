@@ -1,29 +1,31 @@
 import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
 import Panel from '../Panel';
 import '../../app.css';
-import {
-    editQuestionQuery,
-    editQuizQuery,
-    editRoundQuery,
-    getQuestionsQuery,
-    getQuizzesQuery,
-    getRoundsQuery
-} from '../../utils/queries';
+import useData from "../../providers/data/use";
 
 export default function Build() {
 
-    const questionsQuery = useQuery(getQuestionsQuery);
-    const questions = questionsQuery.data && questionsQuery.data.questions;
-    const [editQuestion] = useMutation(editQuestionQuery);
-
-    const roundsQuery = useQuery(getRoundsQuery);
-    const rounds = roundsQuery.data && roundsQuery.data.rounds;
-    const [editRound] = useMutation(editRoundQuery);
-
-    const quizzesQuery = useQuery(getQuizzesQuery);
-    const quizzes = quizzesQuery.data && quizzesQuery.data.quizzes;
-    const [editQuiz] = useMutation(editQuizQuery);
+    const {
+        state: {
+            questions,
+            rounds,
+            quizzes
+        },
+        actions: {
+            getQuestions,
+            addQuestion,
+            editQuestion,
+            deleteQuestion,
+            getRounds,
+            addRound,
+            editRound,
+            deleteRound,
+            getQuizzes,
+            addQuiz,
+            editQuiz,
+            deleteQuiz
+        }
+    } = useData()
 
     const [editing, switchEditing] = useState(false);
     const [editingId, switchEditingId] = useState('');
@@ -38,6 +40,7 @@ export default function Build() {
             {questions &&
                 <Panel
                     data={questions}
+                    getData={getQuestions}
                     partnerData={[]}
                     expanded={currentPanel === 0}
                     editing={editing}
@@ -45,7 +48,9 @@ export default function Build() {
                     panelNumber={0}
                     thisPanel='questions'
                     panelTitle='Questions'
-                    onSaveData={editQuestion}
+                    onAddItem={addQuestion}
+                    onEditItem={editQuestion}
+                    onDeleteItem={deleteQuestion}
                     onSwitchEditing={switchEditing}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(0)}
@@ -54,6 +59,7 @@ export default function Build() {
             {rounds && questions &&
                 <Panel
                     data={rounds}
+                    getData={getRounds}
                     partnerData={questions ?? []}
                     expanded={currentPanel === 1}
                     editing={editing}
@@ -61,8 +67,10 @@ export default function Build() {
                     panelNumber={1}
                     thisPanel='rounds'
                     panelTitle='Rounds'
-                    onSaveData={editRound}
                     onSwitchEditing={switchEditing}
+                    onAddItem={addRound}
+                    onEditItem={editRound}
+                    onDeleteItem={deleteRound}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(1)}
                 />
@@ -70,6 +78,7 @@ export default function Build() {
             {quizzes && rounds &&
                 <Panel
                     data={quizzes}
+                    getData={getQuizzes}
                     partnerData={rounds}
                     expanded={currentPanel === 2}
                     editing={editing}
@@ -77,7 +86,9 @@ export default function Build() {
                     panelNumber={2}
                     thisPanel='quizzes'
                     panelTitle='Quizzes'
-                    onSaveData={editQuiz}
+                    onAddItem={addQuiz}
+                    onEditItem={editQuiz}
+                    onDeleteItem={deleteQuiz}
                     onSwitchEditing={switchEditing}
                     onSwitchEditingId={switchEditingId}
                     onSwitchPanel={() => switchPanel(2)}

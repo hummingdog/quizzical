@@ -12,9 +12,9 @@ export default function Item(props) {
     const [item, editItem] = useState(props.item);
     const [backupItem, editBackupItem] = useState(props.item);
     const [expanded, toggleExpanded] = useState(props.item.id === props.editingId);
-    const [editingThis, toggleEditingThis] = useState(props.item.id === props.editingId);
+    const [editingThis, toggleEditingThis] = useState(props.editing);
     const [itemComplete, toggleItemComplete] = useState(true);
-    const [dragging, toggleDragging] = useState('supported');
+    // const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
         editItem(props.item);
@@ -24,9 +24,11 @@ export default function Item(props) {
         if (props.collapseAll) toggleExpanded(false);
     }, [props.collapseAll]);
 
-    function checkComplete(length = 1) {
+    function checkComplete() {
         let c = true;
-        if (length === 0 || item.title.length === 0 || item.selection.length < 2) c = false;
+        if (!item.title || item.title.length === 0) c = false;
+        if (props.thisPanel === 0 && (!item.selection || item.selection.length < 2)) c = false;
+        // if (item.title.length === 0 || item.selection.length < 2) c = false;
         item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
         if (!c) toggleEditingThis(true);
@@ -61,16 +63,26 @@ export default function Item(props) {
     function saveItem() {
         checkComplete();
         if (itemComplete) {
-            props.onSaveItem(item);
+            if (item.id === 0) {
+                props.onAddItem({ variables: { input: item} })
+                props.getData.refetch()
+            } else {
+                props.onEditItem({ variables: { id: item.id, input: item} })
+            }
             editBackupItem(item);
             toggleEditingThis(false);
             props.onSwitchEditing(false);
         }
     }
 
-    function cancelItem() {
+    function deleteItem(itemId) {
+        props.onDeleteItem({ variables: { id: itemId } })
+        props.getData.refetch()
+    }
+
+    function cancelEdit() {
         if (item.id === 0) {
-            props.onDeleteItem(props.item.id);
+            props.onRemoveItem(props.item.id);
         } else {
             editItem(backupItem);
         }
@@ -79,8 +91,9 @@ export default function Item(props) {
     }
 
     function addOption() {
-        let newItem = {...item};
-        newItem.selection.push({});
+        let newSelection = [ ...item.selection ]
+        newSelection.push('');
+        let newItem = {...item, selection: newSelection};
         editItem(newItem);
     }
 
@@ -89,21 +102,20 @@ export default function Item(props) {
         newSelection[i] = option
         let newItem = {...item, selection: newSelection}
         editItem(newItem);
-        console.log(newItem)
-        props.onSaveItem(newItem);
     }
 
     function removeOption(i) {
-        let newItem = {...item};
-        newItem.selection.splice(i, 1);
-        editItem({...newItem});
-        if (props.thisPanel === 'questions') setCorrect(0);
+        let newSelection = [ ...item.selection ]
+        newSelection.splice(i, 1);
+        let newItem = {...item, selection: newSelection};
+        editItem(newItem);
+        // if (props.thisPanel === 'questions') setCorrect(0);
     }
 
     function setCorrect(i) {
         let newItem = {...item};
         newItem.correctAnswer = +i;
-        editItem({...newItem});
+        editItem(newItem);
     }
 
     return (
@@ -113,13 +125,6 @@ export default function Item(props) {
             data-number={props.panelNumber}
             data-panel={props.thisPanel}
             data-length={item.selection.length}
-            draggable={itemComplete && !editingThis}
-            onDragEnter={props.onDragEnter}
-            onDragOver={props.onDragOver}
-            onDragLeave={props.onDragLeave}
-            onDragStart={props.onDragStart}
-            onDragEnd={props.onDragEnd}
-            onDrop={props.onDrop}
             className={'panel-item ' + props.thisPanel + expandOrOpen}
             onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
         >
@@ -138,8 +143,8 @@ export default function Item(props) {
                     onToggleItem={() => toggleExpanded(!expanded)}
                     onStartEdit={startEdit}
                     onSaveItem={saveItem}
-                    onCancel={cancelItem}
-                    onDeleteItem={props.onDeleteItem}
+                    onCancel={cancelEdit}
+                    onDeleteItem={deleteItem}
                 />
             }
             <ItemText
@@ -170,12 +175,6 @@ export default function Item(props) {
                             onSetCorrect={setCorrect}
                             onEditOption={editOption}
                             onRemoveOption={removeOption}
-                            onDragEnter={props.onDragEnter}
-                            onDragOver={props.onDragOver}
-                            onDragLeave={props.onDragLeave}
-                            onDragStart={props.onDragStart}
-                            onDragEnd={props.onDragEnd}
-                            onDrop={props.onDrop}
                         />
                     )}
                     {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
@@ -189,13 +188,13 @@ export default function Item(props) {
                     }
                 </div>
             }
-            {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
-                <DragHandle
-                    description={'add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
-                    dragging={dragging}
-                    onToggleDragging={toggleDragging}
-                />
-            }
+            {/*{!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&*/}
+            {/*    <DragHandle*/}
+            {/*        description={'add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}*/}
+            {/*        dragging={dragging}*/}
+            {/*        onToggleDragging={toggleDragging}*/}
+            {/*    />*/}
+            {/*}*/}
         </div>
     );
 }
