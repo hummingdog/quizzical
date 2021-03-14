@@ -26,7 +26,9 @@ export default function Panel(props) {
             newItem.selection = ['', ''];
             newItem.correctAnswer = 0;
         }
-        editData(data => [newItem, ...data]);
+        let newData = [...data]
+        newData.unshift(newItem)
+        editData(newData);
         // props.onSwitchPanel();
         props.onSwitchEditing(true);
         props.onSwitchEditingId(newItem.id);
@@ -39,9 +41,9 @@ export default function Panel(props) {
         editData([...newData]);
     }
 
-    function deleteItem(itemId) {
-        props.onDeleteItem(itemId)
-    }
+    // function deleteItem(data) {
+    //     props.onDeleteItem(data)
+    // }
 
     function doCollapseAll() {
         toggleCollapseAll(true);
@@ -112,7 +114,7 @@ export default function Panel(props) {
                                                     onAddItem={props.onAddItem}
                                                     onEditItem={props.onEditItem}
                                                     onRemoveItem={removeItem}
-                                                    onDeleteItem={deleteItem}
+                                                    onDeleteItem={props.onDeleteItem}
                                                     // onSaveItem={saveItem}
                                                 />
                                             </div>

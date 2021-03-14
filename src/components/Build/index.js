@@ -12,15 +12,16 @@ export default function Build() {
             quizzes
         },
         actions: {
-            getQuestions,
+            getUser,
+            // getQuestions,
             addQuestion,
             editQuestion,
             deleteQuestion,
-            getRounds,
+            // getRounds,
             addRound,
             editRound,
             deleteRound,
-            getQuizzes,
+            // getQuizzes,
             addQuiz,
             editQuiz,
             deleteQuiz
@@ -40,7 +41,7 @@ export default function Build() {
             {questions &&
                 <Panel
                     data={questions}
-                    getData={getQuestions}
+                    getData={getUser}
                     partnerData={[]}
                     expanded={currentPanel === 0}
                     editing={editing}
@@ -59,7 +60,7 @@ export default function Build() {
             {rounds &&
                 <Panel
                     data={rounds}
-                    getData={getRounds}
+                    getData={getUser}
                     partnerData={questions ?? []}
                     expanded={currentPanel === 1}
                     editing={editing}
@@ -78,7 +79,7 @@ export default function Build() {
             {quizzes &&
                 <Panel
                     data={quizzes}
-                    getData={getQuizzes}
+                    getData={getUser}
                     partnerData={rounds}
                     expanded={currentPanel === 2}
                     editing={editing}

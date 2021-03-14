@@ -7,8 +7,32 @@ import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/color-blocks.css';
 import {Draggable} from "react-beautiful-dnd";
+import useData from "../../providers/data/use";
 
 export default function Item(props) {
+
+    const {
+        state: {
+            questions,
+            rounds,
+            quizzes
+        },
+        actions: {
+            getUser,
+            // getQuestions,
+            addQuestion,
+            editQuestion,
+            deleteQuestion,
+            // getRounds,
+            addRound,
+            editRound,
+            deleteRound,
+            // getQuizzes,
+            addQuiz,
+            editQuiz,
+            deleteQuiz
+        }
+    } = useData()
 
     const [item, editItem] = useState(props.item);
     const [backupItem, editBackupItem] = useState(props.item);
@@ -78,6 +102,7 @@ export default function Item(props) {
 
     function deleteItem(itemId) {
         props.onDeleteItem({ variables: { id: itemId } })
+        props.onRemoveItem(itemId)
         props.getData.refetch()
     }
 

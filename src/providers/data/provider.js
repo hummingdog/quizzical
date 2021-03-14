@@ -21,6 +21,7 @@ export default function DataProvider({children}) {
     const getUser = useQuery(getUserQuery, {
         variables: { id: '60206483f651da53cba32a7c' },
     })
+
     const questions = getUser.data && getUser.data.user.questions;
     const [addQuestion] = useMutation(addQuestionQuery);
     const [editQuestion] = useMutation(editQuestionQuery);
