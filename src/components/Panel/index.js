@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Item from '../Item';
 import PanelHeader from '../PanelHeader';
 import './panel.css';
+import {Draggable, Droppable} from 'react-beautiful-dnd';
 
 export default function Panel(props) {
 
@@ -15,6 +16,7 @@ export default function Panel(props) {
     function addItem() {
         let newItem = {
             id: 0,
+            owner: '60206483f651da53cba32a7c',
             category: 'Misc',
             public: false,
             title: '',
@@ -72,35 +74,56 @@ export default function Panel(props) {
                     </button>
                 </div>
             }
-            <div
-                className='panel-content'
-            >
-                {data.map((item, i) =>
-                    <Item
-                        key={'item: ' + item.id}
-                        item={item}
-                        editData={editData}
-                        getData={props.getData}
-                        partnerData={props.partnerData}
-                        panelNumber={props.panelNumber}
-                        thisPanel={props.thisPanel}
-                        panelExpanded={props.expanded}
-                        collapseAll={collapseAll}
-                        editing={props.editing}
-                        editingId={props.editingId}
-                        onSwitchEditing={props.onSwitchEditing}
-                        onSwitchEditingId={props.onSwitchEditingId}
-                        onSwitchPanel={props.onSwitchPanel}
-                        // onEditItemText={editItemText}
-                        // onUpdateItem={updateItem}
-                        onAddItem={props.onAddItem}
-                        onEditItem={props.onEditItem}
-                        onRemoveItem={removeItem}
-                        onDeleteItem={deleteItem}
-                        // onSaveItem={saveItem}
-                    />
-                )}
-            </div>
+                <div
+                    className='panel-content'
+                >
+                    <Droppable droppableId={'droppable-' + props.panelNumber}>
+                        {(provided, snapshot) => (
+                            <div
+                                ref={provided.innerRef}
+                                // style={{ backgroundColor: snapshot.isDraggingOver ? 'blue' : 'grey' }}
+                                {...provided.droppableProps}
+                            >
+                                {data.map((item, i) =>
+                                    <Draggable draggableId={'draggable-' + item.id} index={i}>
+                                        {(provided, snapshot) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <Item
+                                                    key={'item: ' + item.id}
+                                                    item={item}
+                                                    editData={editData}
+                                                    getData={props.getData}
+                                                    partnerData={props.partnerData}
+                                                    panelNumber={props.panelNumber}
+                                                    thisPanel={props.thisPanel}
+                                                    panelExpanded={props.expanded}
+                                                    collapseAll={collapseAll}
+                                                    editing={props.editing}
+                                                    editingId={props.editingId}
+                                                    onSwitchEditing={props.onSwitchEditing}
+                                                    onSwitchEditingId={props.onSwitchEditingId}
+                                                    onSwitchPanel={props.onSwitchPanel}
+                                                    // onEditItemText={editItemText}
+                                                    // onUpdateItem={updateItem}
+                                                    onAddItem={props.onAddItem}
+                                                    onEditItem={props.onEditItem}
+                                                    onRemoveItem={removeItem}
+                                                    onDeleteItem={deleteItem}
+                                                    // onSaveItem={saveItem}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                )}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </div>
         </section>
     );
 }

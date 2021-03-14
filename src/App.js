@@ -5,6 +5,7 @@ import Build from './components/Build';
 import './app.css';
 import {ApolloClient, InMemoryCache, ApolloProvider, gql, useQuery} from '@apollo/client';
 import DataProvider from "./providers/data/provider";
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const client = new ApolloClient({
     uri: 'http://localhost:4000/graphql',
@@ -21,7 +22,9 @@ export default function App() {
                 <Route path='/build'>
                     <ApolloProvider client={client}>
                         <DataProvider>
-                            <Build />
+                            <DragDropContext>
+                                <Build />
+                            </DragDropContext>
                         </DataProvider>
                     </ApolloProvider>
                 </Route>

@@ -1,6 +1,7 @@
 import React from 'react'
 import DataContext from "./context";
 import {
+    getUserQuestionsQuery,
     getQuestionsQuery,
     addQuestionQuery,
     editQuestionQuery,
@@ -12,25 +13,25 @@ import {
     getQuizzesQuery,
     addQuizQuery,
     editQuizQuery,
-    deleteQuizQuery
+    deleteQuizQuery, getUserQuery
 } from '../../utils/queries';
 import {useMutation, useQuery} from "@apollo/client";
 
 export default function DataProvider({children}) {
-    const getQuestions = useQuery(getQuestionsQuery);
-    const questions = getQuestions.data && getQuestions.data.questions;
+    const getUser = useQuery(getUserQuery, {
+        variables: { id: '60206483f651da53cba32a7c' },
+    })
+    const questions = getUser.data && getUser.data.user.questions;
     const [addQuestion] = useMutation(addQuestionQuery);
     const [editQuestion] = useMutation(editQuestionQuery);
     const [deleteQuestion] = useMutation(deleteQuestionQuery);
 
-    const getRounds = useQuery(getRoundsQuery);
-    const rounds = getRounds.data && getRounds.data.rounds;
+    const rounds = getUser.data && getUser.data.user.rounds;
     const [addRound] = useMutation(addRoundQuery);
     const [editRound] = useMutation(editRoundQuery);
     const [deleteRound] = useMutation(deleteRoundQuery);
 
-    const getQuizzes = useQuery(getQuizzesQuery);
-    const quizzes = getQuizzes.data && getQuizzes.data.quizzes;
+    const quizzes = getUser.data && getUser.data.user.quizzes;
     const [addQuiz] = useMutation(addQuizQuery);
     const [editQuiz] = useMutation(editQuizQuery);
     const [deleteQuiz] = useMutation(deleteQuizQuery);
@@ -40,15 +41,16 @@ export default function DataProvider({children}) {
             questions, rounds, quizzes
         },
         actions: {
-            getQuestions,
+            getUser,
+            // getQuestions,
             addQuestion,
             editQuestion,
             deleteQuestion,
-            getRounds,
+            // getRounds,
             addRound,
             editRound,
             deleteRound,
-            getQuizzes,
+            // getQuizzes,
             addQuiz,
             editQuiz,
             deleteQuiz

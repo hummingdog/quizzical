@@ -56,7 +56,7 @@ export default function Build() {
                     onSwitchPanel={() => switchPanel(0)}
                 />
             }
-            {rounds && questions &&
+            {rounds &&
                 <Panel
                     data={rounds}
                     getData={getRounds}
@@ -75,7 +75,7 @@ export default function Build() {
                     onSwitchPanel={() => switchPanel(1)}
                 />
             }
-            {quizzes && rounds &&
+            {quizzes &&
                 <Panel
                     data={quizzes}
                     getData={getQuizzes}

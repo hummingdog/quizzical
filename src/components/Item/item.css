@@ -1,6 +1,6 @@
 .panel-item {
     cursor: pointer;
-    margin: 0 10px 20px 10px;
+    /*margin: 0 10px 20px 10px;*/
     transition: 0.2s;
 }
 
@@ -86,7 +86,7 @@ section.open .questions .item-text-box {
 }
 
 .drag-handle {
-    cursor: pointer;
+    cursor: grab;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -94,6 +94,10 @@ section.open .questions .item-text-box {
     height: 20px;
     margin: auto;
 }
+
+/*.drag-handle.grabbing {*/
+/*    cursor: grabbing;*/
+/*}*/
 
 .drag-handle div {
     width: 100%;

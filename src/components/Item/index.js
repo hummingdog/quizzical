@@ -6,6 +6,7 @@ import DragHandle from '../DragHandle';
 import {categories} from '../../static/categories';
 import './item.css';
 import '../../static/color-blocks.css';
+import {Draggable} from "react-beautiful-dnd";
 
 export default function Item(props) {
 
@@ -119,82 +120,84 @@ export default function Item(props) {
     }
 
     return (
-        <div
-            data-name={'item'}
-            data-id={item.id}
-            data-number={props.panelNumber}
-            data-panel={props.thisPanel}
-            data-length={item.selection.length}
-            className={'panel-item ' + props.thisPanel + expandOrOpen}
-            onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
-        >
-            {!expanded && props.panelExpanded &&
-                <div className={'color-box ' + categoryColor}>
-                </div>
-            }
-            {expanded && props.panelExpanded &&
-                <ItemHeader
-                    panelExpanded={props.panelExpanded}
-                    item={props.item}
-                    thisPanel={props.thisPanel}
-                    nextPanel={props.nextPanel}
-                    editing={props.editing}
-                    editingThis={editingThis}
-                    onToggleItem={() => toggleExpanded(!expanded)}
-                    onStartEdit={startEdit}
-                    onSaveItem={saveItem}
-                    onCancel={cancelEdit}
-                    onDeleteItem={deleteItem}
-                />
-            }
-            <ItemText
-                item={item}
-                expanded={expanded}
-                editing={props.editing && editingThis}
-                panelExpanded={props.panelExpanded}
-                onToggleItem={() => toggleExpanded(!expanded)}
-                onCheckComplete={checkComplete}
-                onStartEdit={startEdit}
-                onEditItemText={editItemText}
-            />
-            {expanded && props.panelExpanded &&
-                <div className='item-options'>
-                    {item.selection.map((o, i) =>
-                        <Option
-                            key={o + i}
-                            number={i}
-                            option={o}
+
+                    <div
+                        data-name={'item'}
+                        data-id={item.id}
+                        data-number={props.panelNumber}
+                        data-panel={props.thisPanel}
+                        data-length={item.selection.length}
+                        className={'panel-item ' + props.thisPanel + expandOrOpen}
+                        onClick={!props.panelExpanded && !props.editing ? expandItemAndPanel : undefined}
+                    >
+                        {!expanded && props.panelExpanded &&
+                            <div className={'color-box ' + categoryColor}>
+                            </div>
+                        }
+                        {expanded && props.panelExpanded &&
+                            <ItemHeader
+                                panelExpanded={props.panelExpanded}
+                                item={props.item}
+                                thisPanel={props.thisPanel}
+                                nextPanel={props.nextPanel}
+                                editing={props.editing}
+                                editingThis={editingThis}
+                                onToggleItem={() => toggleExpanded(!expanded)}
+                                onStartEdit={startEdit}
+                                onSaveItem={saveItem}
+                                onCancel={cancelEdit}
+                                onDeleteItem={deleteItem}
+                            />
+                        }
+                        <ItemText
                             item={item}
-                            correct={item.correctAnswer === i}
-                            partnerData={props.partnerData}
+                            expanded={expanded}
                             editing={props.editing && editingThis}
-                            thisPanel={props.thisPanel}
-                            group={item.text}
+                            panelExpanded={props.panelExpanded}
+                            onToggleItem={() => toggleExpanded(!expanded)}
                             onCheckComplete={checkComplete}
                             onStartEdit={startEdit}
-                            onSetCorrect={setCorrect}
-                            onEditOption={editOption}
-                            onRemoveOption={removeOption}
+                            onEditItemText={editItemText}
                         />
-                    )}
-                    {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
-                    <button
-                        title='add an option'
-                        className='add-option'
-                        onClick={addOption}
-                    >
-                        + add option
-                    </button>
-                    }
-                </div>
-            }
-            {/*{!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&*/}
-            {/*    <DragHandle*/}
-            {/*        description={'add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}*/}
-            {/*        dragging={dragging}*/}
-            {/*        onToggleDragging={toggleDragging}*/}
-            {/*    />*/}
-            {/*}*/}
-        </div>
+                        {expanded && props.panelExpanded &&
+                            <div className='item-options'>
+                                {item.selection.map((o, i) =>
+                                    <Option
+                                        key={o + i}
+                                        number={i}
+                                        option={o}
+                                        item={item}
+                                        correct={item.correctAnswer === i}
+                                        partnerData={props.partnerData}
+                                        editing={props.editing && editingThis}
+                                        thisPanel={props.thisPanel}
+                                        group={item.text}
+                                        onCheckComplete={checkComplete}
+                                        onStartEdit={startEdit}
+                                        onSetCorrect={setCorrect}
+                                        onEditOption={editOption}
+                                        onRemoveOption={removeOption}
+                                    />
+                                )}
+                                {props.thisPanel === 'questions' && item.selection.length < 4 && editingThis &&
+                                    <button
+                                        title='add an option'
+                                        className='add-option'
+                                        onClick={addOption}
+                                    >
+                                        + add option
+                                    </button>
+                                }
+                            </div>
+                        }
+                        {!expanded && props.panelExpanded && (props.thisPanel !== 'quizzes') &&
+                            <DragHandle
+                                description={'add it to a ' + (props.thisPanel === 'questions' ? 'round' : 'quiz')}
+                                // dragging={dragging}
+                                // onToggleDragging={toggleDragging}
+                            />
+                        }
+                    </div>
+
     );
 }

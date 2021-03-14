@@ -1,6 +1,32 @@
 import React, {useContext} from 'react';
 import {ApolloClient, InMemoryCache, ApolloProvider, gql, useQuery} from '@apollo/client';
 
+
+export const getUserQuery = gql`
+    query getUser($id: ID) {
+        user(id: $id) {
+            questions {
+                id
+                title
+                selection
+                correctAnswer
+                category
+            },
+            rounds {
+                id
+                title
+                selection
+                category
+            },
+            quizzes {
+                id
+                title
+                selection
+                category
+            }
+        }
+    }`
+
 export const getQuestionsQuery = gql`
     query getQuestions {
         questions {
