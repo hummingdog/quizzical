@@ -38,7 +38,7 @@ export default function Item(props) {
     const [backupItem, editBackupItem] = useState(props.item);
     const [expanded, toggleExpanded] = useState(props.item.id === props.editingId);
     const [editingThis, toggleEditingThis] = useState(props.editing);
-    const [itemComplete, toggleItemComplete] = useState(true);
+    const [itemComplete, toggleItemComplete] = useState();
     // const [dragging, toggleDragging] = useState('supported');
 
     useEffect(() => {
@@ -50,9 +50,9 @@ export default function Item(props) {
     }, [props.collapseAll]);
 
     function checkComplete() {
-        let c = true;
-        if (!item.title || item.title.length === 0) c = false;
-        if (props.thisPanel === 0 && (!item.selection || item.selection.length < 2)) c = false;
+        let c = true
+        if (item.title.length === 0) c = false;
+        if (props.thisPanel === 0 && (item.selection.length < 2)) c = false;
         // if (item.title.length === 0 || item.selection.length < 2) c = false;
         item.selection.forEach(option => { if (option.length === 0) c = false; });
         toggleItemComplete(c);
