@@ -140,17 +140,11 @@ export default function Item(props) {
     }
 
     function setCorrect(optionId) {
-        let prevCorrect = item.selection.filter(option => option.correct)
-        let newSelection = item.selection.filter(option => !option.correct)
-        console.log(newSelection)
-        !!prevCorrect.length && (newSelection.push({...prevCorrect[0], correct: false}))
-        console.log(newSelection)
-        let newCorrect = newSelection.filter(option => option.id == optionId)
-        newSelection = newSelection.filter(option => option.id != optionId)
-        console.log(newSelection)
-        newSelection = newSelection.push({...newCorrect[0], correct: true})
-        console.log(newSelection)
-        // editItem({...item, selection: newSelection});
+        let newItem = JSON.parse(JSON.stringify(item));
+        let prevCorrect = newItem.selection.filter(option => option.correct);
+        !!prevCorrect.length && (prevCorrect[0].correct = false);
+        newItem.selection.filter(option => option.id == optionId)[0].correct = true;
+        editItem(newItem);
     }
 
     return (
