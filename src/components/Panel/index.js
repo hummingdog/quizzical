@@ -23,8 +23,7 @@ export default function Panel(props) {
             selection: []
         };
         if (props.thisPanel === 'questions') {
-            newItem.selection = ['', ''];
-            newItem.correctAnswer = 0;
+            newItem.selection = [{id: 0, text: '', correct: false}, {id: 1, text: '', correct: false}];
         }
         let newData = [...data]
         newData.unshift(newItem)
@@ -87,7 +86,7 @@ export default function Panel(props) {
                                 {...provided.droppableProps}
                             >
                                 {data.map((item, i) =>
-                                    <Draggable draggableId={'draggable-' + item.id} index={i}>
+                                    <Draggable draggableId={'draggable-' + item.id} index={i} key={'item: ' + item.id}>
                                         {(provided, snapshot) => (
                                             <div
                                                 ref={provided.innerRef}
@@ -95,7 +94,6 @@ export default function Panel(props) {
                                                 {...provided.dragHandleProps}
                                             >
                                                 <Item
-                                                    key={'item: ' + item.id}
                                                     item={item}
                                                     editData={editData}
                                                     getData={props.getData}

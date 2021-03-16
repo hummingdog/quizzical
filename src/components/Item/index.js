@@ -118,7 +118,8 @@ export default function Item(props) {
 
     function addOption() {
         let newSelection = [ ...item.selection ]
-        newSelection.push('');
+        let maxId = newSelection.reduce((a, b) => a.id > b.id ? a : b).id;
+        newSelection.push({id: +maxId + 1, text: '', correct: false});
         let newItem = {...item, selection: newSelection};
         editItem(newItem);
     }
@@ -138,10 +139,18 @@ export default function Item(props) {
         // if (props.thisPanel === 'questions') setCorrect(0);
     }
 
-    function setCorrect(i) {
-        let newItem = {...item};
-        newItem.correctAnswer = +i;
-        editItem(newItem);
+    function setCorrect(optionId) {
+        let prevCorrect = item.selection.filter(option => option.correct)
+        let newSelection = item.selection.filter(option => !option.correct)
+        console.log(newSelection)
+        !!prevCorrect.length && (newSelection.push({...prevCorrect[0], correct: false}))
+        console.log(newSelection)
+        let newCorrect = newSelection.filter(option => option.id == optionId)
+        newSelection = newSelection.filter(option => option.id != optionId)
+        console.log(newSelection)
+        newSelection = newSelection.push({...newCorrect[0], correct: true})
+        console.log(newSelection)
+        // editItem({...item, selection: newSelection});
     }
 
     return (
@@ -188,11 +197,11 @@ export default function Item(props) {
                             <div className='item-options'>
                                 {item.selection.map((o, i) =>
                                     <Option
-                                        key={o + i}
+                                        key={o.id}
                                         number={i}
                                         option={o}
                                         item={item}
-                                        correct={item.correctAnswer === i}
+                                        // correct={item.correctAnswer === i}
                                         partnerData={props.partnerData}
                                         editing={props.editing && editingThis}
                                         thisPanel={props.thisPanel}

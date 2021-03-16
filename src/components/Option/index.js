@@ -6,22 +6,21 @@ import {Trash} from 'react-feather';
 export default function Option(props) {
 
     const [option, editOption] = useState(props.option);
-    const [dragging, toggleDragging] = useState('supported');
 
-    useEffect(() => {
-        if (props.thisPanel !== 'questions') getOption();
-    }, [props.option, props.partnerData]);
+    // useEffect(() => {
+    //     if (props.thisPanel !== 'questions') getOption();
+    // }, [props.option, props.partnerData]);
 
-    function getOption() {
-        if (props.partnerData.find(o => o.id === props.option)) {
-            let value = props.partnerData.find(o => o.id === props.option);
-            editOption(value.title);
-        }
-    }
+    // function getOption() {
+    //     if (props.partnerData.find(o => o.id === props.option)) {
+    //         let value = props.partnerData.find(o => o.id === props.option);
+    //         editOption(value.title);
+    //     }
+    // }
 
     function handleChange(event) {
-        editOption(event.target.value);
-        props.onCheckComplete(event.target.value.length);
+        editOption({...option, text: event.target.value});
+        // props.onCheckComplete(event.target.value.length);
     }
 
     function handleRemove() {
@@ -34,17 +33,17 @@ export default function Option(props) {
 
     return (
         <div
-            className={'item-option' + (props.editing ? ' editing' : '') + (props.correct ? ' selected-option' : '')}
+            className={'item-option' + (props.editing ? ' editing' : '') + (props.option.correct ? ' selected-option' : '')}
             data-name={'option'}
-            data-id={props.item.id}
-            data-option={props.number}
+            // data-id={props.option.id}
+            // data-option={props.number}
             onClick={event => event.preventDefault()}>
             {props.editing ?
                 <button
                     title='remove option'
                     value={props.number}
                     data-panel={props.thisPanel}
-                    data-item={props.item.id}
+                    // data-item={props.item.id}
                     className='remove-option'
                     onClick={handleRemove}
                 >
@@ -59,7 +58,7 @@ export default function Option(props) {
             {props.thisPanel === 'questions' && props.editing ?
                 <input
                     className='item-option-input'
-                    value={option}
+                    value={option.text}
                     placeholder='type something!'
                     onChange={handleChange}
                     onBlur={() => props.onEditOption(props.number, option)}
@@ -68,14 +67,14 @@ export default function Option(props) {
                 <button
                     onClick={props.thisPanel === 'questions' ? props.onStartEdit : undefined}
                 >
-                    {option}
+                    {option.text}
                 </button>
             }
             {props.thisPanel === 'questions' && props.editing &&
                 <button
                     aria-roledescription='radio button'
-                    className={'correct-option' + (props.correct ? ' selected-button' : '')}
-                    onClick={() => props.onSetCorrect(props.number)}
+                    className={'correct-option' + (props.option.correct ? ' selected-button' : '')}
+                    onClick={() => props.onSetCorrect(props.option.id)}
                 >
                 </button>
             }

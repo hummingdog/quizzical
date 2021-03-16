@@ -8,8 +8,11 @@ export const getUserQuery = gql`
             questions {
                 id
                 title
-                selection
-                correctAnswer
+                selection {
+                    id
+                    text
+                    correct
+                }
                 category
             },
             rounds {
@@ -27,16 +30,15 @@ export const getUserQuery = gql`
         }
     }`
 
-export const getQuestionsQuery = gql`
-    query getQuestions {
-        questions {
-            id
-            title
-            selection
-            correctAnswer
-            category
-        }
-    }`
+// export const getQuestionsQuery = gql`
+//     query getQuestions {
+//         questions {
+//             id
+//             title
+//             selection {}
+//             category
+//         }
+//     }`
 
 export const addQuestionQuery = gql`
     mutation addQuestion($input: QuestionInput!) {
@@ -44,10 +46,6 @@ export const addQuestionQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
-            correctAnswer
-            category
         }
     }
 `
@@ -59,10 +57,6 @@ export const editQuestionQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
-            correctAnswer
-            category
         }
     }
 `
@@ -77,14 +71,14 @@ export const deleteQuestionQuery = gql`
     }
 `
 
-export const getRoundsQuery = gql`
-    query getRounds {
-        rounds {
-            id
-            title
-            selection
-        }
-    }`
+// export const getRoundsQuery = gql`
+//     query getRounds {
+//         rounds {
+//             id
+//             title
+//             selection
+//         }
+//     }`
 
 export const addRoundQuery = gql`
     mutation addRound($input: RoundInput!) {
@@ -92,8 +86,6 @@ export const addRoundQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
         }
     }
 `
@@ -105,8 +97,6 @@ export const editRoundQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
         }
     }
 `
@@ -121,14 +111,14 @@ export const deleteRoundQuery = gql`
     }
 `
 
-export const getQuizzesQuery = gql`
-    query getQuizzes {
-        quizzes {
-            id
-            title
-            selection
-        }
-    }`
+// export const getQuizzesQuery = gql`
+//     query getQuizzes {
+//         quizzes {
+//             id
+//             title
+//             selection
+//         }
+//     }`
 
 export const addQuizQuery = gql`
     mutation addQuiz($input: QuizInput!) {
@@ -136,8 +126,6 @@ export const addQuizQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
         }
     }
 `
@@ -149,8 +137,6 @@ export const editQuizQuery = gql`
             input: $input
         ) {
             id
-            title
-            selection
         }
     }
 `
