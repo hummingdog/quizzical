@@ -7,7 +7,7 @@ export const getUserQuery = gql`
         user(id: $id) {
             questions {
                 id
-                title
+                text
                 selection {
                     id
                     text
@@ -17,13 +17,16 @@ export const getUserQuery = gql`
             },
             rounds {
                 id
-                title
-                selection
+                text
+                selection {
+                    id
+                    text
+                }
                 category
             },
             quizzes {
                 id
-                title
+                text
                 selection
                 category
             }

@@ -19,7 +19,7 @@ export default function Panel(props) {
             owner: '60206483f651da53cba32a7c',
             category: 'Misc',
             public: false,
-            title: '',
+            text: '',
             selection: []
         };
         if (props.thisPanel === 'questions') {

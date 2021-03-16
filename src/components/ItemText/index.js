@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 
 export default function ItemText(props) {
 
-    const [text, editText] = useState(props.item.title);
+    const [text, editText] = useState(props.item.text);
 
     useEffect(() => {
-        editText(props.item.title);
-    }, [props.item.title]);
+        editText(props.item.text);
+    }, [props.item.text]);
 
     const truncateText = (str) => {
         return !props.panelExpanded && str.length > 65 ? str.substring(0,62) + '...' : str;

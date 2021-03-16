@@ -51,7 +51,7 @@ export default function Item(props) {
 
     function checkComplete() {
         let c = true
-        if (item.title.length === 0) c = false;
+        if (item.text.length === 0) c = false;
         if (props.thisPanel === 0 && (item.selection.length < 2)) c = false;
         // if (item.title.length === 0 || item.selection.length < 2) c = false;
         item.selection.forEach(option => { if (option.length === 0) c = false; });
@@ -81,7 +81,7 @@ export default function Item(props) {
 
     function editItemText(value) {
         let newItem = {...item};
-        newItem.title = value;
+        newItem.text = value;
         editItem(newItem);
     }
 
